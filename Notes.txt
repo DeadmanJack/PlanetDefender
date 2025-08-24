@@ -1,0 +1,80 @@
+Easy RPG 
+
+Scaling issues
+https://discordapp.com/channels/572073135101444117/806226625112965121/1276156342385774715
+
+retargeting
+https://discordapp.com/channels/572073135101444117/806226625112965121/1276156342385774715
+https://discordapp.com/channels/572073135101444117/1275256789335670886/1275263902824796242
+https://discordapp.com/channels/572073135101444117/1163515686023344208/1163515686023344208
+
+
+
+OFFICIAL TUTORIALS:
+
+How to work with items https://bit.ly/39jEBMG
+How to work with blueprints https://bit.ly/39kVeb4
+How to work with item abilities https://bit.ly/3swoPpd
+How to work with maps https://bit.ly/3u1mdA4
+How to work with quest system | Main https://bit.ly/3dbf21q
+How to work with quest system | Level Updater https://bit.ly/2QAYgRL
+How to work with quest system | Points and Tags https://bit.ly/3fePcfR
+How to retarget | Character: Mannequin https://bit.ly/3feaPg8
+How to add a particle to any weapon https://bit.ly/3rhySxa
+How to change start multiplayer map https://bit.ly/2QFa5GJ
+How to add new building object https://bit.ly/3feKzlH
+How to add new modular building object https://bit.ly/2NXfg3Q
+How to change building menu list https://bit.ly/3ssrnVk
+How to create mine instance https://bit.ly/3rCzAW0
+How to add new character customization https://bit.ly/39vHVof
+How to set up modular character https://bit.ly/3aj6Trl
+How to add new stance/moveset https://bit.ly/33y1lp2
+How to add a new enemy https://bit.ly/3bivXPK
+How to add a new tree https://bit.ly/3nPvd9X
+Advanced Session Plugin https://bit.ly/30H1vwp
+How to add new animal enemy https://bit.ly/3FW1155 
+
+
+
+Try this:
+nope, i never retarget.. i just assigned the TPS skeleton to my character mesh
+https://youtu.be/ob4lBgsfC00 @JSFILMZ  helped me out just assign the skeleton to the default mannequin and then make that compatible with the tps kit skeleton 
+
+Retarget anims:
+1) open /Content/AdvancedLocomotionV4/CharacterAssets/MannequinSkeleton/ALS_Mannequin_Skeleton.uasset
+2) Window -> Asset Details
+3) Add compatible skeleton from new animation package
+4) Select Asset Browswer tab and make sure new anims show up
+5) Open /Content/Synty/IKRetargeter_ALS_to_Synty.uasset
+6) Select new anims in Asset Browser tab
+7) Click "Export Selected Animations" button and save them into a folder
+	7b) I usually name the folder RTG_Anims and put it in the new anim asset package folder where it makes sense
+8) You should now be able to open /Content/Synty/SK_Synty_Polygon_Unreal.uasset and play the new anims
+9) File -> Save All
+
+
+
+Attributions:
+- Modern Crossbow anims - Center of Nothing
+- Synty retargeter - TC Mabe
+- AnimStarterPack - Epic Games
+- A Survivors Icon Kit - Klask
+- 250+ Survival Flat Icons - KatGrabowska
+- 
+
+
+Convert Static Mesh to Skeletal mesh
+- Right click Static Mesh -> Asset Actions -> Export
+- Save as a different name somewhere (I put SK on the end)
+- Right click in window with old SM and click Import to game...
+- Choose exported skeleton
+- Check the Skeletal Mesh check box
+- In material section turn off "Import Textures" and set Material Import Method to "Do Not Create Material"
+- Import
+
+---- Live Coding ----
+https://docs.unrealengine.com/5.0/en-US/using-live-coding-to-recompile-unreal-engine-applications-at-runtime/
+IMPORTANT:  Leave "Enable Reinstancing" checked when using live coding.  Not doing so can corrupt things.  Also, need to occasionally run
+== When Object Reinstancing is enabled, you need to clean up pointers. If your code maintains pointers to objects that can be reinstanced, you need to use "ReloadReinstancingCompleteDelegate" and "ReloadCompleteDelegate" to update these pointers or invalidate caches so they can be repopulated later.
+
+To Do:
