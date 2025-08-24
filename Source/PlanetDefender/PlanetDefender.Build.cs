@@ -19,5 +19,7 @@ public class PlanetDefender : ModuleRules
 		// PrivateDependencyModuleNames.Add("OnlineSubsystem");
 
 		// To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
+		
+		// GWIZ Pooling System is included automatically since it's in the same module
 	}
 }

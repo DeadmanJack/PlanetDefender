@@ -6,8 +6,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "GWIZObjectPool.h"
-#include "GWIZPoolStatistics.h"
-#include "GWIZPoolConfig.h"
+#include "PoolingTypes.h"
 #include "GWIZPoolingManager.generated.h"
 
 UCLASS()

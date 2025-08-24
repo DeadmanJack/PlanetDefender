@@ -1,46 +1,161 @@
 // Copyright (c) 2024 Groove Wizard, Inc. All Rights Reserved.
-// This code is part of the GWIZ Generic Pooling System for Unreal Engine.
 
 #include "GWIZObjectPool.h"
+#include "Engine/Engine.h"
+#include "HAL/PlatformTime.h"
+#include "Misc/DateTime.h"
 
-void UGWIZObjectPool::PostInitProperties()
+UGWIZObjectPool::UGWIZObjectPool()
+    : bIsInitialized(false)
 {
-    Super::PostInitProperties();
-    
-    // Initialize default configuration and statistics
+    // Initialize with default configuration
     Config = FGWIZPoolConfig();
     Statistics = FGWIZPoolStatistics();
 }
 
 UObject* UGWIZObjectPool::GetObject(TSubclassOf<UObject> ObjectClass)
 {
-    // TODO: Implement object retrieval from pool
-    return nullptr;
+    if (!ObjectClass)
+    {
+        LogDebug(TEXT("GetObject: Invalid object class"));
+        return nullptr;
+    }
+
+    // Set object class if not already set
+    if (!PooledObjectClass)
+    {
+        PooledObjectClass = ObjectClass;
+    }
+
+    UObject* Object = nullptr;
+
+    // Try to get object from pool first
+    if (AvailableObjects.Num() > 0)
+    {
+        Object = AvailableObjects.Pop();
+        Statistics.PoolHits++;
+        LogDebug(FString::Printf(TEXT("GetObject: Retrieved from pool, remaining: %d"), AvailableObjects.Num()));
+    }
+    else
+    {
+        // Pool is empty, create new object
+        Object = CreateNewObject();
+        Statistics.PoolMisses++;
+        LogDebug(TEXT("GetObject: Created new object"));
+    }
+
+    if (Object)
+    {
+        // Move object to in-use list
+        ObjectsInUse.Add(Object);
+        
+        // Initialize object for use
+        InitializeObject(Object);
+        
+        // Update statistics
+        UpdateStatistics();
+    }
+
+    return Object;
 }
 
 void UGWIZObjectPool::ReturnObject(UObject* Object)
 {
-    // TODO: Implement object return to pool
+    if (!Object)
+    {
+        LogDebug(TEXT("ReturnObject: Invalid object"));
+        return;
+    }
+
+    // Remove from in-use list
+    ObjectsInUse.Remove(Object);
+
+    // Clean up object for pooling
+    CleanupObject(Object);
+
+    // Check if we should add to pool or destroy
+    if (AvailableObjects.Num() < Config.MaxPoolSize)
+    {
+        AvailableObjects.Add(Object);
+        LogDebug(FString::Printf(TEXT("ReturnObject: Added to pool, size: %d"), AvailableObjects.Num()));
+    }
+    else
+    {
+        // Pool is full, destroy object
+        LogDebug(TEXT("ReturnObject: Pool full, destroying object"));
+        // Note: In Unreal, we typically don't manually destroy UObjects
+        // They're garbage collected when no references remain
+    }
+
+    // Update statistics
+    UpdateStatistics();
 }
 
 void UGWIZObjectPool::AddToPool(UObject* Object)
 {
-    // TODO: Implement adding object to pool
+    if (!ValidateObject(Object))
+    {
+        LogDebug(TEXT("AddToPool: Invalid object"));
+        return;
+    }
+
+    if (AvailableObjects.Num() >= Config.MaxPoolSize)
+    {
+        LogDebug(TEXT("AddToPool: Pool is full"));
+        return;
+    }
+
+    AvailableObjects.Add(Object);
+    LogDebug(FString::Printf(TEXT("AddToPool: Added to pool, size: %d"), AvailableObjects.Num()));
+    
+    UpdateStatistics();
 }
 
 void UGWIZObjectPool::RemoveFromPool(UObject* Object)
 {
-    // TODO: Implement removing object from pool
+    if (!Object)
+    {
+        return;
+    }
+
+    AvailableObjects.Remove(Object);
+    LogDebug(FString::Printf(TEXT("RemoveFromPool: Removed from pool, size: %d"), AvailableObjects.Num()));
+    
+    UpdateStatistics();
 }
 
 void UGWIZObjectPool::ClearPool()
 {
-    // TODO: Implement pool clearing
+    LogDebug(FString::Printf(TEXT("ClearPool: Clearing %d available objects"), AvailableObjects.Num()));
+    
+    AvailableObjects.Empty();
+    UpdateStatistics();
 }
 
 void UGWIZObjectPool::PreWarmPool(int32 Count)
 {
-    // TODO: Implement pool pre-warming
+    if (!PooledObjectClass)
+    {
+        LogDebug(TEXT("PreWarmPool: No object class set"));
+        return;
+    }
+
+    const int32 TargetCount = FMath::Min(Count, Config.MaxPoolSize);
+    const int32 CurrentCount = AvailableObjects.Num();
+    const int32 ToCreate = FMath::Max(0, TargetCount - CurrentCount);
+
+    LogDebug(FString::Printf(TEXT("PreWarmPool: Creating %d objects"), ToCreate));
+
+    for (int32 i = 0; i < ToCreate; ++i)
+    {
+        UObject* Object = CreateNewObject();
+        if (Object)
+        {
+            AvailableObjects.Add(Object);
+        }
+    }
+
+    UpdateStatistics();
 }
 
 FGWIZPoolStatistics UGWIZObjectPool::GetStatistics() const
@@ -50,7 +165,20 @@ FGWIZPoolStatistics UGWIZObjectPool::GetStatistics() const
 
 void UGWIZObjectPool::PrintDebugInfo()
 {
-    // TODO: Implement debug info printing
+    if (!Config.bEnableDebug)
+    {
+        return;
+    }
+
+    UE_LOG(LogTemp, Log, TEXT("=== GWIZ Object Pool Debug Info ==="));
+    UE_LOG(LogTemp, Log, TEXT("Pool Size: %d"), AvailableObjects.Num());
+    UE_LOG(LogTemp, Log, TEXT("Objects In Use: %d"), ObjectsInUse.Num());
+    UE_LOG(LogTemp, Log, TEXT("Total Created: %d"), Statistics.TotalObjectsCreated);
+    UE_LOG(LogTemp, Log, TEXT("Pool Hits: %d"), Statistics.PoolHits);
+    UE_LOG(LogTemp, Log, TEXT("Pool Misses: %d"), Statistics.PoolMisses);
+    UE_LOG(LogTemp, Log, TEXT("Hit Rate: %.2f%%"), Statistics.HitRate * 100.0f);
+    UE_LOG(LogTemp, Log, TEXT("Memory Usage: %lld bytes"), Statistics.MemoryUsage);
+    UE_LOG(LogTemp, Log, TEXT("================================"));
 }
 
 int64 UGWIZObjectPool::GetMemoryUsage() const
@@ -60,56 +188,178 @@ int64 UGWIZObjectPool::GetMemoryUsage() const
 
 bool UGWIZObjectPool::ValidatePool() const
 {
-    // TODO: Implement pool validation
+    // Check if pool size matches statistics
+    if (AvailableObjects.Num() != Statistics.CurrentPoolSize)
+    {
+        return false;
+    }
+
+    // Check if objects in use matches statistics
+    if (ObjectsInUse.Num() != Statistics.ObjectsInUse)
+    {
+        return false;
+    }
+
+    // Check if total objects matches statistics
+    if (AvailableObjects.Num() + ObjectsInUse.Num() != Statistics.GetTotalObjects())
+    {
+        return false;
+    }
+
     return true;
 }
 
 int32 UGWIZObjectPool::GetPoolSize() const
 {
-    return Statistics.CurrentPoolSize;
+    return AvailableObjects.Num();
 }
 
 int32 UGWIZObjectPool::GetObjectsInUse() const
 {
-    return Statistics.ObjectsInUse;
+    return ObjectsInUse.Num();
 }
 
-FGWIZPoolConfig UGWIZObjectPool::GetConfig() const
+bool UGWIZObjectPool::IsPoolEmpty() const
 {
-    return Config;
+    return AvailableObjects.Num() == 0;
 }
 
-void UGWIZObjectPool::SetConfig(const FGWIZPoolConfig& NewConfig)
+bool UGWIZObjectPool::IsPoolFull() const
 {
-    Config = NewConfig;
+    return AvailableObjects.Num() >= Config.MaxPoolSize;
 }
 
-bool UGWIZObjectPool::IsEmpty() const
+UObject* UGWIZObjectPool::CreateNewObject()
 {
-    return Statistics.CurrentPoolSize == 0;
+    if (!PooledObjectClass)
+    {
+        return nullptr;
+    }
+
+    UObject* Object = NewObject<UObject>(this, PooledObjectClass);
+    if (Object)
+    {
+        Statistics.TotalObjectsCreated++;
+        LogDebug(TEXT("CreateNewObject: Created new object"));
+    }
+
+    return Object;
 }
 
-bool UGWIZObjectPool::IsFull() const
+void UGWIZObjectPool::InitializeObject(UObject* Object)
 {
-    return Statistics.CurrentPoolSize >= Config.MaxPoolSize;
+    if (!Object)
+    {
+        return;
+    }
+
+    // Check if object implements the poolable interface
+    if (Object->GetClass()->ImplementsInterface(UGWIZPoolable::StaticClass()))
+    {
+        IGWIZPoolable::Execute_OnPooled(Object);
+    }
+
+    // For actors, we can do additional initialization
+    if (AActor* Actor = Cast<AActor>(Object))
+    {
+        // Enable ticking and rendering
+        Actor->SetActorTickEnabled(true);
+        Actor->SetActorHiddenInGame(false);
+        Actor->SetActorEnableCollision(true);
+    }
 }
 
-float UGWIZObjectPool::GetHitRate() const
+void UGWIZObjectPool::CleanupObject(UObject* Object)
 {
-    return Statistics.HitRate;
+    if (!Object)
+    {
+        return;
+    }
+
+    // Check if object implements the poolable interface
+    if (Object->GetClass()->ImplementsInterface(UGWIZPoolable::StaticClass()))
+    {
+        IGWIZPoolable::Execute_OnUnpooled(Object);
+    }
+
+    // For actors, we can do additional cleanup
+    if (AActor* Actor = Cast<AActor>(Object))
+    {
+        // Disable ticking and rendering
+        Actor->SetActorTickEnabled(false);
+        Actor->SetActorHiddenInGame(true);
+        Actor->SetActorEnableCollision(false);
+    }
 }
 
-void UGWIZObjectPool::ForceCleanup()
+void UGWIZObjectPool::UpdateStatistics()
 {
-    // TODO: Implement forced cleanup
+    Statistics.CurrentPoolSize = AvailableObjects.Num();
+    Statistics.ObjectsInUse = ObjectsInUse.Num();
+    Statistics.LastUpdateTime = FPlatformTime::Seconds();
+    
+    // Update peak concurrent usage
+    const int32 TotalObjects = Statistics.GetTotalObjects();
+    if (TotalObjects > Statistics.PeakConcurrentUsage)
+    {
+        Statistics.PeakConcurrentUsage = TotalObjects;
+    }
+
+    // Calculate hit rate
+    Statistics.CalculateHitRate();
+
+    // Calculate memory usage if monitoring is enabled
+    if (Config.bEnableMonitoring)
+    {
+        CalculateMemoryUsage();
+    }
 }
 
-FString UGWIZObjectPool::GetPoolCategory() const
+void UGWIZObjectPool::CalculateMemoryUsage()
 {
-    return Config.PoolCategory;
+    int64 TotalMemory = 0;
+
+    // Calculate memory for available objects
+    for (UObject* Object : AvailableObjects)
+    {
+        if (Object)
+        {
+            TotalMemory += Object->GetClass()->GetPropertiesSize();
+        }
+    }
+
+    // Calculate memory for objects in use
+    for (UObject* Object : ObjectsInUse)
+    {
+        if (Object)
+        {
+            TotalMemory += Object->GetClass()->GetPropertiesSize();
+        }
+    }
+
+    Statistics.MemoryUsage = TotalMemory;
 }
 
-int32 UGWIZObjectPool::GetPoolPriority() const
+void UGWIZObjectPool::LogDebug(const FString& Message)
 {
-    return Config.Priority;
+    if (Config.bEnableDebug)
+    {
+        UE_LOG(LogTemp, Log, TEXT("[GWIZ Pool] %s"), *Message);
+    }
+}
+
+bool UGWIZObjectPool::ValidateObject(UObject* Object) const
+{
+    if (!Object)
+    {
+        return false;
+    }
+
+    // Check if object is of the correct class
+    if (PooledObjectClass && !Object->IsA(PooledObjectClass))
+    {
+        return false;
+    }
+
+    return true;
 }
