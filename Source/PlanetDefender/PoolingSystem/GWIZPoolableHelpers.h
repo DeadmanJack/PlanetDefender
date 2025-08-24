@@ -53,19 +53,5 @@ public:
         return Object && Object->GetClass()->ImplementsInterface(T::StaticClass());
     }
 
-    /**
-     * Safe interface function execution.
-     * @param Object Object to execute function on
-     * @param Function Function to execute
-     * @param Args Arguments to pass to function
-     */
-    template<typename T, typename... Args>
-    static void ExecuteInterfaceFunction(UObject* Object, void (T::*Function)(Args...), Args&&... args)
-    {
-        if (Object && Object->GetClass()->ImplementsInterface(T::StaticClass()))
-        {
-            // Note: This is a simplified version. In practice, you'd need to handle each interface function specifically
-            // since UE's interface system doesn't support generic function calling like this
-        }
-    }
+
 };
