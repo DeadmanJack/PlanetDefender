@@ -465,8 +465,23 @@ void AGWIZPoolingManager::GetGlobalPerformanceMetrics(TArray<FGWIZPoolStatistics
 
 TArray<UGWIZObjectPool*> AGWIZPoolingManager::GetAllPools() const
 {
-    // TODO: Implement get all pools
-    return TArray<UGWIZObjectPool*>();
+    TArray<UGWIZObjectPool*> Result;
+    
+    // Thread-safe access to pools map
+    FScopeLock Lock(&PoolMutex);
+    
+    // Copy all pools to result array
+    Pools.GenerateValueArray(Result);
+    
+    // Filter out null pointers
+    Result.RemoveAll([](UGWIZObjectPool* Pool) { return Pool == nullptr; });
+    
+    if (bEnableDebugMode)
+    {
+        UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::GetAllPools - Retrieved %d valid pools"), Result.Num());
+    }
+    
+    return Result;
 }
 
 int32 AGWIZPoolingManager::GetPoolCount() const
