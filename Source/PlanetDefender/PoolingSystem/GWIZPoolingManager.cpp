@@ -427,7 +427,40 @@ void AGWIZPoolingManager::PrintAllPoolStatistics()
 
 void AGWIZPoolingManager::GetGlobalPerformanceMetrics(TArray<FGWIZPoolStatistics>& AllStats)
 {
-    // TODO: Implement global performance metrics collection
+    // Clear output array
+    AllStats.Empty();
+    
+    // Thread-safe access to pools map
+    FScopeLock Lock(&PoolMutex);
+    
+    // Collect statistics from all pools
+    for (auto& PoolPair : Pools)
+    {
+        UGWIZObjectPool* Pool = PoolPair.Value;
+        if (Pool != nullptr)
+        {
+            FGWIZPoolStatistics Stats = Pool->GetStatistics();
+            AllStats.Add(Stats);
+        }
+    }
+    
+    // Store historical data for trend analysis
+    if (bEnablePerformanceMonitoring)
+    {
+        HistoricalStats.Append(AllStats);
+        
+        // Keep only last 100 entries to prevent memory bloat
+        const int32 MaxHistoricalEntries = 100;
+        if (HistoricalStats.Num() > MaxHistoricalEntries)
+        {
+            HistoricalStats.RemoveAt(0, HistoricalStats.Num() - MaxHistoricalEntries);
+        }
+    }
+    
+    if (bEnableDebugMode)
+    {
+        UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::GetGlobalPerformanceMetrics - Collected metrics from %d pools"), AllStats.Num());
+    }
 }
 
 TArray<UGWIZObjectPool*> AGWIZPoolingManager::GetAllPools() const
