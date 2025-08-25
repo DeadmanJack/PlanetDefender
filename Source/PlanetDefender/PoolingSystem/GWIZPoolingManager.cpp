@@ -60,7 +60,7 @@ void AGWIZPoolingManager::Tick(float DeltaTime)
     // Debug display updates every frame (if enabled)
     if (bEnableDebugMode)
     {
-        // TODO: UpdateDebugDisplay();
+        UpdateDebugDisplay();
     }
 }
 
@@ -905,6 +905,79 @@ void AGWIZPoolingManager::PerformAutoCleanup()
     {
         UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::PerformAutoCleanup - Cleaned up %d objects from %d pools"), 
                TotalObjectsRemoved, CleanedPools);
+    }
+}
+
+void AGWIZPoolingManager::UpdateDebugDisplay()
+{
+    if (!bEnableDebugMode)
+    {
+        return;
+    }
+    
+    // Get current statistics
+    int32 TotalPools = GetPoolCount();
+    int32 TotalObjects = GetTotalObjects();
+    int32 TotalObjectsInUse = GetTotalObjectsInUse();
+    int64 TotalMemoryUsage = GetTotalMemoryUsage();
+    
+    // Calculate global hit rate
+    TArray<FGWIZPoolStatistics> AllStats;
+    GetGlobalPerformanceMetrics(AllStats);
+    
+    float GlobalHitRate = 0.0f;
+    int32 TotalAccesses = 0;
+    
+    for (const FGWIZPoolStatistics& Stat : AllStats)
+    {
+        const int32 Accesses = Stat.PoolHits + Stat.PoolMisses;
+        if (Accesses > 0)
+        {
+            GlobalHitRate += Stat.HitRate * Accesses;
+            TotalAccesses += Accesses;
+        }
+    }
+    
+    if (TotalAccesses > 0)
+    {
+        GlobalHitRate /= TotalAccesses;
+    }
+    
+    // Display debug information on screen (if we have access to HUD)
+    if (GEngine && GEngine->GetWorld())
+    {
+        // Create debug text
+        FString DebugText = FString::Printf(TEXT("GWIZ Pooling System Debug Info:\n"));
+        DebugText += FString::Printf(TEXT("Total Pools: %d\n"), TotalPools);
+        DebugText += FString::Printf(TEXT("Total Objects: %d\n"), TotalObjects);
+        DebugText += FString::Printf(TEXT("Objects In Use: %d\n"), TotalObjectsInUse);
+        DebugText += FString::Printf(TEXT("Memory Usage: %.2f MB\n"), TotalMemoryUsage / (1024.0f * 1024.0f));
+        DebugText += FString::Printf(TEXT("Global Hit Rate: %.1f%%\n"), GlobalHitRate * 100.0f);
+        
+        // Display on screen (this would need to be integrated with the game's HUD system)
+        // For now, we'll just log the information
+        UE_LOG(LogTemp, Log, TEXT("=== GWIZ Pooling Debug Display ==="));
+        UE_LOG(LogTemp, Log, TEXT("%s"), *DebugText);
+        UE_LOG(LogTemp, Log, TEXT("=== End Debug Display ==="));
+    }
+    
+    // Log detailed pool information if verbose debug is enabled
+    if (bEnableDebugMode)
+    {
+        for (auto& PoolPair : Pools)
+        {
+            UGWIZObjectPool* Pool = PoolPair.Value;
+            if (Pool != nullptr)
+            {
+                FGWIZPoolStatistics Stats = Pool->GetStatistics();
+                UE_LOG(LogTemp, Log, TEXT("Pool %s: Size=%d, InUse=%d, HitRate=%.1f%%, Memory=%.2f MB"), 
+                       *PoolPair.Key->GetName(), 
+                       Stats.CurrentPoolSize, 
+                       Stats.ObjectsInUse, 
+                       Stats.HitRate * 100.0f,
+                       Stats.MemoryUsage / (1024.0f * 1024.0f));
+            }
+        }
     }
 }
 
