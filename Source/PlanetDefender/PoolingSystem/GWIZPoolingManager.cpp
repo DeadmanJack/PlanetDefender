@@ -580,8 +580,17 @@ UGWIZObjectPool* AGWIZPoolingManager::GetPoolForClass(TSubclassOf<UObject> Objec
 
 TArray<UGWIZObjectPool*> AGWIZPoolingManager::GetPoolsByCategory(const FString& Category) const
 {
-    // TODO: Implement get pools by category
-    return TArray<UGWIZObjectPool*>();
+    TArray<UGWIZObjectPool*> Result;
+    
+    // TODO: Implement category system when PoolingTypes.h is updated with category support
+    // For now, return empty array as category system is not yet implemented
+    
+    if (bEnableDebugMode)
+    {
+        UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::GetPoolsByCategory - Category system not yet implemented. Requested category: %s"), *Category);
+    }
+    
+    return Result;
 }
 
 TArray<UGWIZObjectPool*> AGWIZPoolingManager::GetPoolsByPriority(int32 Priority) const
