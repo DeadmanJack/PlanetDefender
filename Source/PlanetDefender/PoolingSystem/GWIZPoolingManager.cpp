@@ -491,7 +491,43 @@ int32 AGWIZPoolingManager::GetPoolCount() const
 
 void AGWIZPoolingManager::ClearAllPools()
 {
-    // TODO: Implement clear all pools
+    // Thread-safe access to pools map
+    FScopeLock Lock(&PoolMutex);
+    
+    int32 TotalPools = Pools.Num();
+    int32 ClearedPools = 0;
+    
+    if (bEnableDebugMode)
+    {
+        UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::ClearAllPools - Starting cleanup of %d pools"), TotalPools);
+    }
+    
+    // Clear each pool
+    for (auto& PoolPair : Pools)
+    {
+        UGWIZObjectPool* Pool = PoolPair.Value;
+        if (Pool != nullptr)
+        {
+            Pool->ClearPool();
+            ClearedPools++;
+            
+            if (bEnableDebugMode)
+            {
+                UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::ClearAllPools - Cleared pool for class %s"), *PoolPair.Key->GetName());
+            }
+        }
+    }
+    
+    // Clear the pools map
+    Pools.Empty();
+    
+    // Clear historical statistics
+    HistoricalStats.Empty();
+    
+    if (bEnableDebugMode)
+    {
+        UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::ClearAllPools - Completed cleanup of %d/%d pools"), ClearedPools, TotalPools);
+    }
 }
 
 UGWIZObjectPool* AGWIZPoolingManager::GetPoolForClass(TSubclassOf<UObject> ObjectClass) const
