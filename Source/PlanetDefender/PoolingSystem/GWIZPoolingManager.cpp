@@ -532,7 +532,49 @@ void AGWIZPoolingManager::ClearAllPools()
 
 UGWIZObjectPool* AGWIZPoolingManager::GetPoolForClass(TSubclassOf<UObject> ObjectClass) const
 {
-    // TODO: Implement get pool for specific class
+    // Validate input
+    if (!ObjectClass)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("GWIZPoolingManager::GetPoolForClass - Invalid object class provided"));
+        return nullptr;
+    }
+    
+    // Thread-safe access to pools map
+    FScopeLock Lock(&PoolMutex);
+    
+    // Try to find exact class match first
+    UGWIZObjectPool** FoundPool = Pools.Find(ObjectClass);
+    if (FoundPool != nullptr && *FoundPool != nullptr)
+    {
+        return *FoundPool;
+    }
+    
+    // If no exact match, try to find a pool for a parent class
+    UClass* CurrentClass = ObjectClass;
+    while (CurrentClass != nullptr)
+    {
+        UClass* ParentClass = CurrentClass->GetSuperClass();
+        if (ParentClass != nullptr && ParentClass != UObject::StaticClass())
+        {
+            UGWIZObjectPool** ParentPool = Pools.Find(ParentClass);
+            if (ParentPool != nullptr && *ParentPool != nullptr)
+            {
+                if (bEnableDebugMode)
+                {
+                    UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::GetPoolForClass - Found pool for parent class %s for requested class %s"), 
+                           *ParentClass->GetName(), *ObjectClass->GetName());
+                }
+                return *ParentPool;
+            }
+        }
+        CurrentClass = ParentClass;
+    }
+    
+    if (bEnableDebugMode)
+    {
+        UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::GetPoolForClass - No pool found for class %s"), *ObjectClass->GetName());
+    }
+    
     return nullptr;
 }
 
