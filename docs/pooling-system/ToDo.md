@@ -8,7 +8,7 @@ This document lists all outstanding tasks for completing the GWIZ Pooling System
 - **Configuration Types**: ✅ Complete (PoolingTypes.h)
 - **Object Pool**: ✅ Complete (GWIZObjectPool.h/.cpp)
 - **Poolable Helpers**: ✅ Complete (GWIZPoolableHelpers.h/.cpp)
-- **Pooling Manager**: ✅ **Phase 1-3 Complete** (GWIZPoolingManager.h/.cpp) - **15/20 TODOs Complete**
+- **Pooling Manager**: ✅ **Phase 1-3 Complete** (GWIZPoolingManager.h/.cpp) - **13/20 TODOs Complete**
 
 ---
 
@@ -106,14 +106,14 @@ This document lists all outstanding tasks for completing the GWIZ Pooling System
   - Add performance optimization for frequent class lookups
   - Support template-based pool retrieval
 
-- [x] **Implement get pools by category** (Line 126)
+- [ ] **Implement get pools by category** (Line 126)
   - Create GetPoolsByCategory() function implementation with category system
   - Add category-based filtering with wildcard support
   - Implement category management utilities and validation
   - Add category performance tracking and statistics
   - Support dynamic category assignment and reclassification
 
-- [x] **Implement get pools by priority** (Line 132)
+- [ ] **Implement get pools by priority** (Line 132)
   - Create GetPoolsByPriority() function implementation with priority system
   - Add priority-based filtering with range support
   - Implement priority management utilities and validation
@@ -154,7 +154,7 @@ This document lists all outstanding tasks for completing the GWIZ Pooling System
 ## Phase 4: Performance and Debug Features (Medium Priority)
 
 ### 4.1 Performance Monitoring
-- [ ] **Implement UpdatePerformanceMetrics()** (Line 38)
+- [x] **Implement UpdatePerformanceMetrics()** (Line 38)
   - Create performance data collection with real-time tracking
   - Add performance alerts and threshold monitoring
   - Implement performance optimization suggestions and recommendations

@@ -51,7 +51,7 @@ void AGWIZPoolingManager::Tick(float DeltaTime)
         
         if (bEnablePerformanceMonitoring)
         {
-            // TODO: UpdatePerformanceMetrics();
+            UpdatePerformanceMetrics();
         }
         
         // TODO: if (bEnableAutoCleanup) CleanupUnusedPools();
@@ -751,5 +751,80 @@ int32 AGWIZPoolingManager::GetTotalObjectsInUse() const
     }
     
     return TotalObjectsInUse;
+}
+
+void AGWIZPoolingManager::UpdatePerformanceMetrics()
+{
+    if (!bEnablePerformanceMonitoring)
+    {
+        return;
+    }
+    
+    // Collect current performance data
+    TArray<FGWIZPoolStatistics> CurrentStats;
+    GetGlobalPerformanceMetrics(CurrentStats);
+    
+    // Calculate performance trends
+    if (HistoricalStats.Num() > 0)
+    {
+        // Calculate memory usage trend
+        int64 CurrentMemoryUsage = GetTotalMemoryUsage();
+        int64 PreviousMemoryUsage = 0;
+        
+        if (HistoricalStats.Num() >= 2)
+        {
+            // Get memory usage from previous frame
+            for (const FGWIZPoolStatistics& Stat : HistoricalStats)
+            {
+                PreviousMemoryUsage += Stat.MemoryUsage;
+            }
+            PreviousMemoryUsage /= HistoricalStats.Num();
+        }
+        
+        // Calculate memory growth rate
+        float MemoryGrowthRate = 0.0f;
+        if (PreviousMemoryUsage > 0)
+        {
+            MemoryGrowthRate = static_cast<float>(CurrentMemoryUsage - PreviousMemoryUsage) / static_cast<float>(PreviousMemoryUsage);
+        }
+        
+        // Log performance alerts if thresholds are exceeded
+        const float MemoryGrowthThreshold = 0.1f; // 10% growth
+        if (MemoryGrowthRate > MemoryGrowthThreshold)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("GWIZPoolingManager::UpdatePerformanceMetrics - High memory growth detected: %.2f%%"), MemoryGrowthRate * 100.0f);
+        }
+        
+        // Calculate hit rate trends
+        float AverageHitRate = 0.0f;
+        int32 TotalAccesses = 0;
+        
+        for (const FGWIZPoolStatistics& Stat : CurrentStats)
+        {
+            const int32 Accesses = Stat.PoolHits + Stat.PoolMisses;
+            if (Accesses > 0)
+            {
+                AverageHitRate += Stat.HitRate * Accesses;
+                TotalAccesses += Accesses;
+            }
+        }
+        
+        if (TotalAccesses > 0)
+        {
+            AverageHitRate /= TotalAccesses;
+            
+            // Log low hit rate warnings
+            const float LowHitRateThreshold = 0.5f; // 50%
+            if (AverageHitRate < LowHitRateThreshold)
+            {
+                UE_LOG(LogTemp, Warning, TEXT("GWIZPoolingManager::UpdatePerformanceMetrics - Low hit rate detected: %.2f%%"), AverageHitRate * 100.0f);
+            }
+        }
+    }
+    
+    if (bEnableDebugMode)
+    {
+        UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::UpdatePerformanceMetrics - Updated performance metrics for %d pools"), CurrentStats.Num());
+    }
 }
 
