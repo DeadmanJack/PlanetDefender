@@ -703,8 +703,28 @@ int64 AGWIZPoolingManager::GetTotalMemoryUsage() const
 
 int32 AGWIZPoolingManager::GetTotalObjects() const
 {
-    // TODO: Implement total objects calculation
-    return 0;
+    int32 TotalObjects = 0;
+    
+    // Thread-safe access to pools map
+    FScopeLock Lock(&PoolMutex);
+    
+    // Calculate total objects from all pools
+    for (auto& PoolPair : Pools)
+    {
+        UGWIZObjectPool* Pool = PoolPair.Value;
+        if (Pool != nullptr)
+        {
+            FGWIZPoolStatistics Stats = Pool->GetStatistics();
+            TotalObjects += Stats.GetTotalObjects();
+        }
+    }
+    
+    if (bEnableDebugMode)
+    {
+        UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::GetTotalObjects - Total objects across all pools: %d"), TotalObjects);
+    }
+    
+    return TotalObjects;
 }
 
 int32 AGWIZPoolingManager::GetTotalObjectsInUse() const
