@@ -610,7 +610,69 @@ TArray<UGWIZObjectPool*> AGWIZPoolingManager::GetPoolsByPriority(int32 Priority)
 
 void AGWIZPoolingManager::CleanupUnusedPools()
 {
-    // TODO: Implement cleanup unused pools
+    // Thread-safe access to pools map
+    FScopeLock Lock(&PoolMutex);
+    
+    int32 TotalPools = Pools.Num();
+    int32 CleanedPools = 0;
+    
+    if (bEnableDebugMode)
+    {
+        UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::CleanupUnusedPools - Starting cleanup of %d pools"), TotalPools);
+    }
+    
+    // Find pools to clean up (pools with no objects in use and excess objects)
+    TArray<TSubclassOf<UObject>> PoolsToCleanup;
+    
+    for (auto& PoolPair : Pools)
+    {
+        UGWIZObjectPool* Pool = PoolPair.Value;
+        if (Pool != nullptr)
+        {
+            FGWIZPoolStatistics Stats = Pool->GetStatistics();
+            
+            // Clean up if no objects are in use and pool size exceeds minimum
+            if (Stats.ObjectsInUse == 0 && Stats.CurrentPoolSize > Pool->Config.MinPoolSize)
+            {
+                PoolsToCleanup.Add(PoolPair.Key);
+            }
+        }
+    }
+    
+    // Clean up identified pools
+    for (TSubclassOf<UObject> ClassToCleanup : PoolsToCleanup)
+    {
+        UGWIZObjectPool** PoolPtr = Pools.Find(ClassToCleanup);
+        if (PoolPtr != nullptr && *PoolPtr != nullptr)
+        {
+            UGWIZObjectPool* Pool = *PoolPtr;
+            FGWIZPoolStatistics Stats = Pool->GetStatistics();
+            
+            // Reduce pool size to minimum
+            int32 ObjectsToRemove = Stats.CurrentPoolSize - Pool->Config.MinPoolSize;
+            if (ObjectsToRemove > 0)
+            {
+                // Remove excess objects from pool
+                for (int32 i = 0; i < ObjectsToRemove; ++i)
+                {
+                    Pool->RemoveFromPool(nullptr); // Remove from available pool
+                }
+                
+                CleanedPools++;
+                
+                if (bEnableDebugMode)
+                {
+                    UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::CleanupUnusedPools - Cleaned up %d objects from pool %s"), 
+                           ObjectsToRemove, *ClassToCleanup->GetName());
+                }
+            }
+        }
+    }
+    
+    if (bEnableDebugMode)
+    {
+        UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::CleanupUnusedPools - Completed cleanup of %d pools"), CleanedPools);
+    }
 }
 
 int64 AGWIZPoolingManager::GetTotalMemoryUsage() const
