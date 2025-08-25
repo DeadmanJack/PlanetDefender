@@ -355,7 +355,74 @@ void AGWIZPoolingManager::PreWarmAllPools()
 
 void AGWIZPoolingManager::PrintAllPoolStatistics()
 {
-    // TODO: Implement all pool statistics printing
+    // Thread-safe access to pools map
+    FScopeLock Lock(&PoolMutex);
+    
+    int32 TotalPools = Pools.Num();
+    if (TotalPools == 0)
+    {
+        UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::PrintAllPoolStatistics - No pools to display"));
+        return;
+    }
+    
+    // Print header
+    UE_LOG(LogTemp, Log, TEXT("=== GWIZ Pooling System Statistics ==="));
+    UE_LOG(LogTemp, Log, TEXT("Total Pools: %d"), TotalPools);
+    UE_LOG(LogTemp, Log, TEXT(""));
+    
+    // Calculate global totals
+    int32 TotalObjects = 0;
+    int32 TotalObjectsInUse = 0;
+    int64 TotalMemoryUsage = 0;
+    int32 TotalPoolHits = 0;
+    int32 TotalPoolMisses = 0;
+    
+    // Print individual pool statistics
+    for (auto& PoolPair : Pools)
+    {
+        UGWIZObjectPool* Pool = PoolPair.Value;
+        if (Pool != nullptr)
+        {
+            FGWIZPoolStatistics Stats = Pool->GetStatistics();
+            
+            // Update global totals
+            TotalObjects += Stats.GetTotalObjects();
+            TotalObjectsInUse += Stats.ObjectsInUse;
+            TotalMemoryUsage += Stats.MemoryUsage;
+            TotalPoolHits += Stats.PoolHits;
+            TotalPoolMisses += Stats.PoolMisses;
+            
+            // Print pool details
+            UE_LOG(LogTemp, Log, TEXT("Pool: %s"), *PoolPair.Key->GetName());
+            UE_LOG(LogTemp, Log, TEXT("  Configuration: Min=%d, Max=%d, Initial=%d"), 
+                   Pool->Config.MinPoolSize, Pool->Config.MaxPoolSize, Pool->Config.InitialPoolSize);
+            UE_LOG(LogTemp, Log, TEXT("  Current Pool Size: %d"), Stats.CurrentPoolSize);
+            UE_LOG(LogTemp, Log, TEXT("  Objects In Use: %d"), Stats.ObjectsInUse);
+            UE_LOG(LogTemp, Log, TEXT("  Total Objects Created: %d"), Stats.TotalObjectsCreated);
+            UE_LOG(LogTemp, Log, TEXT("  Pool Hits: %d"), Stats.PoolHits);
+            UE_LOG(LogTemp, Log, TEXT("  Pool Misses: %d"), Stats.PoolMisses);
+            UE_LOG(LogTemp, Log, TEXT("  Hit Rate: %.2f%%"), Stats.HitRate * 100.0f);
+            UE_LOG(LogTemp, Log, TEXT("  Memory Usage: %lld bytes (%.2f MB)"), 
+                   Stats.MemoryUsage, Stats.MemoryUsage / (1024.0f * 1024.0f));
+            UE_LOG(LogTemp, Log, TEXT("  Average Lifetime: %.2f seconds"), Stats.AverageLifetime);
+            UE_LOG(LogTemp, Log, TEXT("  Peak Concurrent Usage: %d"), Stats.PeakConcurrentUsage);
+            UE_LOG(LogTemp, Log, TEXT(""));
+        }
+    }
+    
+    // Print global summary
+    UE_LOG(LogTemp, Log, TEXT("=== Global Summary ==="));
+    UE_LOG(LogTemp, Log, TEXT("Total Objects: %d"), TotalObjects);
+    UE_LOG(LogTemp, Log, TEXT("Total Objects In Use: %d"), TotalObjectsInUse);
+    UE_LOG(LogTemp, Log, TEXT("Total Memory Usage: %lld bytes (%.2f MB)"), 
+           TotalMemoryUsage, TotalMemoryUsage / (1024.0f * 1024.0f));
+    
+    const int32 TotalAccesses = TotalPoolHits + TotalPoolMisses;
+    const float GlobalHitRate = TotalAccesses > 0 ? static_cast<float>(TotalPoolHits) / static_cast<float>(TotalAccesses) : 0.0f;
+    UE_LOG(LogTemp, Log, TEXT("Global Hit Rate: %.2f%%"), GlobalHitRate * 100.0f);
+    UE_LOG(LogTemp, Log, TEXT("Total Pool Hits: %d"), TotalPoolHits);
+    UE_LOG(LogTemp, Log, TEXT("Total Pool Misses: %d"), TotalPoolMisses);
+    UE_LOG(LogTemp, Log, TEXT("=== End Statistics ==="));
 }
 
 void AGWIZPoolingManager::GetGlobalPerformanceMetrics(TArray<FGWIZPoolStatistics>& AllStats)
