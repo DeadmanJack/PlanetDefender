@@ -582,12 +582,22 @@ TArray<UGWIZObjectPool*> AGWIZPoolingManager::GetPoolsByCategory(const FString& 
 {
     TArray<UGWIZObjectPool*> Result;
     
-    // TODO: Implement category system when PoolingTypes.h is updated with category support
-    // For now, return empty array as category system is not yet implemented
+    // Thread-safe access to pools map
+    FScopeLock Lock(&PoolMutex);
+    
+    // Find pools matching the requested category
+    for (auto& PoolPair : Pools)
+    {
+        UGWIZObjectPool* Pool = PoolPair.Value;
+        if (Pool != nullptr && Pool->Config.Category.Equals(Category, ESearchCase::IgnoreCase))
+        {
+            Result.Add(Pool);
+        }
+    }
     
     if (bEnableDebugMode)
     {
-        UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::GetPoolsByCategory - Category system not yet implemented. Requested category: %s"), *Category);
+        UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::GetPoolsByCategory - Found %d pools for category: %s"), Result.Num(), *Category);
     }
     
     return Result;
@@ -597,12 +607,22 @@ TArray<UGWIZObjectPool*> AGWIZPoolingManager::GetPoolsByPriority(int32 Priority)
 {
     TArray<UGWIZObjectPool*> Result;
     
-    // TODO: Implement priority system when PoolingTypes.h is updated with priority support
-    // For now, return empty array as priority system is not yet implemented
+    // Thread-safe access to pools map
+    FScopeLock Lock(&PoolMutex);
+    
+    // Find pools matching the requested priority
+    for (auto& PoolPair : Pools)
+    {
+        UGWIZObjectPool* Pool = PoolPair.Value;
+        if (Pool != nullptr && Pool->Config.Priority == Priority)
+        {
+            Result.Add(Pool);
+        }
+    }
     
     if (bEnableDebugMode)
     {
-        UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::GetPoolsByPriority - Priority system not yet implemented. Requested priority: %d"), Priority);
+        UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::GetPoolsByPriority - Found %d pools for priority: %d"), Result.Num(), Priority);
     }
     
     return Result;

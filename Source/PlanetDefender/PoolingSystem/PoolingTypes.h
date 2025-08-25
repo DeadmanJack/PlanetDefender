@@ -23,6 +23,8 @@ public:
         , bEnableDebug(false)
         , bEnableMonitoring(true)
         , bEnableThreadSafety(false)
+        , Category(TEXT("Default"))
+        , Priority(5)
     {
     }
 
@@ -49,6 +51,14 @@ public:
     /** Whether to enable thread safety features */
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GWIZ Pooling")
     bool bEnableThreadSafety;
+
+    /** Category for organizing pools (e.g., "Projectiles", "Effects", "UI") */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GWIZ Pooling")
+    FString Category;
+
+    /** Priority level for pool management (higher = more important) */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GWIZ Pooling", meta = (ClampMin = "0", ClampMax = "10"))
+    int32 Priority;
 
     /** Validate configuration values */
     bool IsValid() const
