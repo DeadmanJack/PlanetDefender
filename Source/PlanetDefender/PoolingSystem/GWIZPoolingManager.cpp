@@ -595,8 +595,17 @@ TArray<UGWIZObjectPool*> AGWIZPoolingManager::GetPoolsByCategory(const FString& 
 
 TArray<UGWIZObjectPool*> AGWIZPoolingManager::GetPoolsByPriority(int32 Priority) const
 {
-    // TODO: Implement get pools by priority
-    return TArray<UGWIZObjectPool*>();
+    TArray<UGWIZObjectPool*> Result;
+    
+    // TODO: Implement priority system when PoolingTypes.h is updated with priority support
+    // For now, return empty array as priority system is not yet implemented
+    
+    if (bEnableDebugMode)
+    {
+        UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::GetPoolsByPriority - Priority system not yet implemented. Requested priority: %d"), Priority);
+    }
+    
+    return Result;
 }
 
 void AGWIZPoolingManager::CleanupUnusedPools()
