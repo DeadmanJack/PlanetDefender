@@ -54,7 +54,7 @@ void AGWIZPoolingManager::Tick(float DeltaTime)
             UpdatePerformanceMetrics();
         }
         
-        // TODO: if (bEnableAutoCleanup) CleanupUnusedPools();
+        if (bEnableAutoCleanup) PerformAutoCleanup();
     }
     
     // Debug display updates every frame (if enabled)
@@ -825,6 +825,86 @@ void AGWIZPoolingManager::UpdatePerformanceMetrics()
     if (bEnableDebugMode)
     {
         UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::UpdatePerformanceMetrics - Updated performance metrics for %d pools"), CurrentStats.Num());
+    }
+}
+
+void AGWIZPoolingManager::PerformAutoCleanup()
+{
+    if (!bEnableAutoCleanup)
+    {
+        return;
+    }
+    
+    // Thread-safe access to pools map
+    FScopeLock Lock(&PoolMutex);
+    
+    int32 CleanedPools = 0;
+    int32 TotalObjectsRemoved = 0;
+    
+    // Check each pool for cleanup conditions
+    for (auto& PoolPair : Pools)
+    {
+        UGWIZObjectPool* Pool = PoolPair.Value;
+        if (Pool != nullptr)
+        {
+            FGWIZPoolStatistics Stats = Pool->GetStatistics();
+            
+            // Cleanup conditions:
+            // 1. No objects in use
+            // 2. Pool size exceeds minimum
+            // 3. Pool has been unused for a while (based on hit rate)
+            bool ShouldCleanup = false;
+            int32 ObjectsToRemove = 0;
+            
+            if (Stats.ObjectsInUse == 0 && Stats.CurrentPoolSize > Pool->Config.MinPoolSize)
+            {
+                // Calculate how many objects to remove based on usage patterns
+                const float HitRate = Stats.HitRate;
+                const int32 ExcessObjects = Stats.CurrentPoolSize - Pool->Config.MinPoolSize;
+                
+                if (HitRate < 0.3f) // Low hit rate - remove more objects
+                {
+                    ObjectsToRemove = FMath::Min(ExcessObjects, ExcessObjects / 2);
+                }
+                else if (HitRate < 0.7f) // Medium hit rate - remove some objects
+                {
+                    ObjectsToRemove = FMath::Min(ExcessObjects, ExcessObjects / 4);
+                }
+                else // High hit rate - keep most objects
+                {
+                    ObjectsToRemove = FMath::Min(ExcessObjects, ExcessObjects / 8);
+                }
+                
+                if (ObjectsToRemove > 0)
+                {
+                    ShouldCleanup = true;
+                }
+            }
+            
+            // Perform cleanup if conditions are met
+            if (ShouldCleanup)
+            {
+                for (int32 i = 0; i < ObjectsToRemove; ++i)
+                {
+                    Pool->RemoveFromPool(nullptr);
+                }
+                
+                CleanedPools++;
+                TotalObjectsRemoved += ObjectsToRemove;
+                
+                if (bEnableDebugMode)
+                {
+                    UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::PerformAutoCleanup - Cleaned up %d objects from pool %s"), 
+                           ObjectsToRemove, *PoolPair.Key->GetName());
+                }
+            }
+        }
+    }
+    
+    if (bEnableDebugMode && CleanedPools > 0)
+    {
+        UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::PerformAutoCleanup - Cleaned up %d objects from %d pools"), 
+               TotalObjectsRemoved, CleanedPools);
     }
 }
 
