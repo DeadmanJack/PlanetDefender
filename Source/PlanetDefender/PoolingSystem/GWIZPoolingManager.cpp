@@ -677,8 +677,28 @@ void AGWIZPoolingManager::CleanupUnusedPools()
 
 int64 AGWIZPoolingManager::GetTotalMemoryUsage() const
 {
-    // TODO: Implement total memory usage calculation
-    return 0;
+    int64 TotalMemoryUsage = 0;
+    
+    // Thread-safe access to pools map
+    FScopeLock Lock(&PoolMutex);
+    
+    // Calculate memory usage from all pools
+    for (auto& PoolPair : Pools)
+    {
+        UGWIZObjectPool* Pool = PoolPair.Value;
+        if (Pool != nullptr)
+        {
+            TotalMemoryUsage += Pool->GetMemoryUsage();
+        }
+    }
+    
+    if (bEnableDebugMode)
+    {
+        UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::GetTotalMemoryUsage - Total memory usage: %lld bytes (%.2f MB)"), 
+               TotalMemoryUsage, TotalMemoryUsage / (1024.0f * 1024.0f));
+    }
+    
+    return TotalMemoryUsage;
 }
 
 int32 AGWIZPoolingManager::GetTotalObjects() const
