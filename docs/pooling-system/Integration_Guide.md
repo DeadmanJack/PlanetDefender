@@ -55,8 +55,9 @@ public class YourProject : ModuleRules
             "Core", 
             "CoreUObject", 
             "Engine", 
-            "InputCore",
-            "HAL" // Required for thread safety features
+            "InputCore"
+            // HAL is included automatically in UE5, but can be added explicitly if needed:
+            // "HAL" // Required for thread safety features
         });
         
         PrivateDependencyModuleNames.AddRange(new string[] { });
