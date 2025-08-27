@@ -8,6 +8,7 @@
 #include "PoolingSystem/GWIZObjectPool.h"
 #include "PoolingSystem/GWIZPoolingManager.h"
 #include "PoolingSystem/PoolingTypes.h"
+#include "TestRunner.h"
 
 /**
  * Simple test suite for GWIZ Pooling System.
@@ -43,7 +44,7 @@ private:
         }
         
         // Set up basic configuration
-        TestPool->SetPooledObjectClass(UObject::StaticClass());
+        TestPool->SetPooledObjectClass(UGWIZPoolingTestRunner::StaticClass());
         TestPool->Config.MinPoolSize = 5;
         TestPool->Config.MaxPoolSize = 20;
         TestPool->Config.InitialPoolSize = 10;
@@ -69,7 +70,7 @@ private:
         UE_LOG(LogTemp, Log, TEXT("Testing Object Retrieval and Return..."));
         
         UGWIZObjectPool* TestPool = NewObject<UGWIZObjectPool>();
-        TestPool->SetPooledObjectClass(UObject::StaticClass());
+        TestPool->SetPooledObjectClass(UGWIZPoolingTestRunner::StaticClass());
         TestPool->Config.MinPoolSize = 3;
         TestPool->Config.MaxPoolSize = 10;
         TestPool->Config.InitialPoolSize = 5;
@@ -109,7 +110,7 @@ private:
         UE_LOG(LogTemp, Log, TEXT("Testing Pool Configuration..."));
         
         UGWIZObjectPool* TestPool = NewObject<UGWIZObjectPool>();
-        TestPool->SetPooledObjectClass(UObject::StaticClass());
+        TestPool->SetPooledObjectClass(UGWIZPoolingTestRunner::StaticClass());
         
         // Test configuration update
         FGWIZPoolConfig NewConfig;
@@ -136,7 +137,7 @@ private:
         UE_LOG(LogTemp, Log, TEXT("Testing Pool Statistics..."));
         
         UGWIZObjectPool* TestPool = NewObject<UGWIZObjectPool>();
-        TestPool->SetPooledObjectClass(UObject::StaticClass());
+        TestPool->SetPooledObjectClass(UGWIZPoolingTestRunner::StaticClass());
         TestPool->Config.MinPoolSize = 2;
         TestPool->Config.MaxPoolSize = 10;
         TestPool->Config.InitialPoolSize = 5;
@@ -203,10 +204,10 @@ private:
         UE_LOG(LogTemp, Log, TEXT("Pooling manager created successfully"));
         
         // Test pool retrieval
-        UGWIZObjectPool* Pool = Manager->GetPool(UObject::StaticClass());
+        UGWIZObjectPool* Pool = Manager->GetPool(UGWIZPoolingTestRunner::StaticClass());
         if (Pool)
         {
-            UE_LOG(LogTemp, Log, TEXT("Successfully retrieved pool for UObject"));
+            UE_LOG(LogTemp, Log, TEXT("Successfully retrieved pool for UGWIZPoolingTestRunner"));
             UE_LOG(LogTemp, Log, TEXT("Pool class: %s"), *Pool->GetClass()->GetName());
         }
         else
@@ -215,7 +216,7 @@ private:
         }
         
         // Test object lifecycle
-        UObject* PooledObject = Manager->GetPooledObject(UObject::StaticClass());
+        UObject* PooledObject = Manager->GetPooledObject(UGWIZPoolingTestRunner::StaticClass());
         if (PooledObject)
         {
             UE_LOG(LogTemp, Log, TEXT("Successfully retrieved pooled object"));

@@ -14,7 +14,11 @@ public class PlanetDefenderTests : ModuleRules
         PrivateDependencyModuleNames.AddRange(new string[] { "PlanetDefender" });
         
         // Test framework dependencies
-        PrivateDependencyModuleNames.AddRange(new string[] { "UnrealEd", "AutomationTest" });
+        if (Target.bBuildEditor)
+        {
+            PrivateDependencyModuleNames.AddRange(new string[] { "UnrealEd" });
+        }
+        PrivateDependencyModuleNames.AddRange(new string[] { "AutomationTest" });
         
         // Enable testing
         bEnableUndefinedIdentifierWarnings = false;

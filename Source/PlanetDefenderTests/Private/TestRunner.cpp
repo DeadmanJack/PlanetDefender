@@ -32,7 +32,7 @@ void RunQuickPoolingTest()
     UGWIZObjectPool* TestPool = NewObject<UGWIZObjectPool>();
     if (TestPool)
     {
-        TestPool->SetPooledObjectClass(UObject::StaticClass());
+        TestPool->SetPooledObjectClass(UGWIZPoolingTestRunner::StaticClass());
         TestPool->Config.MinPoolSize = 2;
         TestPool->Config.MaxPoolSize = 5;
         TestPool->Config.InitialPoolSize = 3;
