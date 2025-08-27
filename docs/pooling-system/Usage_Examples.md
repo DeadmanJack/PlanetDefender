@@ -27,8 +27,8 @@ void AMyActor::SpawnProjectile()
     if (Projectile)
     {
         // Configure the projectile
-        Projectile->SetLocation(GetActorLocation());
-        Projectile->SetVelocity(GetActorForwardVector() * 1000.0f);
+        Projectile->SetActorLocation(GetActorLocation());
+        Projectile->SetActorRotation(GetActorRotation());
         
         // Store reference for later return
         ActiveProjectiles.Add(Projectile);

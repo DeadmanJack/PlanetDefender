@@ -98,6 +98,7 @@ PoolingSystemPlugin/
 
 #### 1.3 Update Class Names
 - Change `PLANETDEFENDER_API` to `POOLINGSYSTEMPLUGIN_API`
+- Update all class declarations to use the new API macro
 - Update all class references
 - Fix any project-specific dependencies
 
@@ -139,7 +140,7 @@ PoolingSystemPlugin/
 ### Namespace Changes
 ```cpp
 // Before (Project-specific)
-class PLANETDEFENDER_API AGWIZPoolingManager : public AActor
+class POOLINGSYSTEMPLUGIN_API AGWIZPoolingManager : public AActor
 
 // After (Plugin)
 class POOLINGSYSTEMPLUGIN_API AGWIZPoolingManager : public AActor

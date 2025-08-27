@@ -145,15 +145,15 @@ Blueprint: Methods exposed under category "GWIZ Pooling".
 ```cpp
 // Acquire global manager and get an object
 AGWIZPoolingManager* Manager = AGWIZPoolingManager::GetPoolingManager(GetWorld());
-UObject* Obj = Manager->GetPooledObject(MyClass);
+AActor* Actor = Cast<AActor>(Manager->GetPooledObject(AMyActor::StaticClass()));
 
 // Use the object ... then return it
-Manager->ReturnPooledObject(Obj);
+Manager->ReturnPooledObject(Actor);
 ```
 
 ### Minimal Blueprint Example
-1. Call "Get Pooling Manager" (WorldContext).
-2. Call "Get Pooled Object" with your class.
-3. When finished, call "Return Pooled Object" passing the object.
+1. Call "Get Pooling Manager" (World Context)
+2. Call "Get Pooled Object" with your class
+3. When finished, call "Return Pooled Object" passing the object
 
 
