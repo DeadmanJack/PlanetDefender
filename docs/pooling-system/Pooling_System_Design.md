@@ -7,12 +7,12 @@
 #### 1. IGWIZPoolable Interface
 ```cpp
 UINTERFACE(BlueprintType)
-class GWIZPOOLING_API UGWIZPoolable : public UInterface
+class PLANETDEFENDER_API UGWIZPoolable : public UInterface
 {
     GENERATED_BODY()
 };
 
-class GWIZPOOLING_API IGWIZPoolable
+class PLANETDEFENDER_API IGWIZPoolable
 {
     GENERATED_BODY()
 
@@ -34,7 +34,7 @@ public:
 #### 2. FGWIZPoolConfig Structure
 ```cpp
 USTRUCT(BlueprintType)
-struct GWIZPOOLING_API FGWIZPoolConfig
+struct PLANETDEFENDER_API FGWIZPoolConfig
 {
     GENERATED_BODY()
     
@@ -67,7 +67,7 @@ struct GWIZPOOLING_API FGWIZPoolConfig
 #### 3. FGWIZPoolStatistics Structure
 ```cpp
 USTRUCT(BlueprintType)
-struct GWIZPOOLING_API FGWIZPoolStatistics
+struct PLANETDEFENDER_API FGWIZPoolStatistics
 {
     GENERATED_BODY()
     
@@ -112,7 +112,7 @@ struct GWIZPOOLING_API FGWIZPoolStatistics
 #### 4. UGWIZObjectPool Class
 ```cpp
 UCLASS(BlueprintType, Blueprintable)
-class GWIZPOOLING_API UGWIZObjectPool : public UObject
+class PLANETDEFENDER_API UGWIZObjectPool : public UObject
 {
     GENERATED_BODY()
     
@@ -186,7 +186,7 @@ public:
 #### 5. AGWIZPoolingManager Class
 ```cpp
 UCLASS(BlueprintType, Blueprintable)
-class GWIZPOOLING_API AGWIZPoolingManager : public AActor
+class PLANETDEFENDER_API AGWIZPoolingManager : public AActor
 {
     GENERATED_BODY()
     
