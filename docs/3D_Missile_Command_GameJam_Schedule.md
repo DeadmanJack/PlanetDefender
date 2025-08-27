@@ -14,21 +14,21 @@
 
 #### Morning (3 hours)
 - [ ] **Project Setup & Basic Architecture**
-  - Create Unreal Engine 5.6 project with C++ support
-  - Set up basic folder structure (Source, Content, Configs)
-  - Create base Entity class and component system
-  - Implement basic Game Mode and Game State
-  - **Mass AI Setup:** Enable Mass AI plugin and create basic entity archetypes
-  - **Object Pooling Foundation:** Create pool manager class structure with IPoolable interface
+  - [ ] 1.1 Create Unreal Engine 5.6 project with C++ support
+  - [ ] 1.2 Set up basic folder structure (Source, Content, Configs)
+  - [ ] 1.3 Create base Entity class and component system
+  - [ ] 1.4 Implement basic Game Mode and Game State
+  - [ ] 1.5 **Mass AI Setup:** Enable Mass AI plugin and create basic entity archetypes
+  - [ ] 1.6 **Object Pooling Foundation:** Create pool manager class structure with IPoolable interface
 
 #### Afternoon (3 hours)
 - [ ] **Core Game Loop Foundation**
-  - Implement 20-minute session timer with Game State integration
-  - Create basic city class with health system and destructible components
-  - Set up simple camera system (fixed overhead view with zoom capabilities)
-  - Basic input handling for mouse aiming with sub-16ms response target
-  - **Object Pooling:** Initialize basic pools for projectiles and effects
-  - **Performance Baseline:** Establish target metrics for 1000+ entities
+  - [ ] 1.7 Implement 20-minute session timer with Game State integration
+  - [ ] 1.8 Create basic city class with health system and destructible components
+  - [ ] 1.9 Set up simple camera system (fixed overhead view with zoom capabilities)
+  - [ ] 1.10 Basic input handling for mouse aiming with sub-16ms response target
+  - [ ] 1.11 **Object Pooling:** Initialize basic pools for projectiles and effects
+  - [ ] 1.12 **Performance Baseline:** Establish target metrics for 1000+ entities
 
 **Dependencies:** None (Day 1 foundation)
 **Deliverable:** Playable foundation with timer, basic city health, and performance monitoring
@@ -40,21 +40,21 @@
 
 #### Morning (3 hours)
 - [ ] **Basic Weapon System**
-  - Implement manual weapon firing (simple projectiles with physics)
-  - Create geometric projectile meshes (spheres/cubes) with Niagara VFX trails
-  - Basic collision detection system with spatial partitioning
-  - Simple weapon cooldown and fire rate management
-  - **Object Pooling:** Integrate projectile pooling for weapon system
-  - **Performance:** Test with 100+ projectiles simultaneously
+  - [ ] 2.1 Implement manual weapon firing (simple projectiles with physics)
+  - [ ] 2.2 Create geometric projectile meshes (spheres/cubes) with Niagara VFX trails
+  - [ ] 2.3 Basic collision detection system with spatial partitioning
+  - [ ] 2.4 Simple weapon cooldown and fire rate management
+  - [ ] 2.5 **Object Pooling:** Integrate projectile pooling for weapon system
+  - [ ] 2.6 **Performance:** Test with 100+ projectiles simultaneously
 
 #### Afternoon (3 hours)
 - [ ] **Enemy System Foundation**
-  - Create basic enemy class with health and destructible components
-  - Implement simple enemy spawning (geometric shapes) with wave management
-  - Basic enemy movement toward cities with 3D pathfinding
-  - Enemy destruction and scoring system
-  - **Mass AI Integration:** Convert enemies to Mass AI entities with basic behaviors
-  - **Object Pooling:** Implement enemy pooling for efficient spawning
+  - [ ] 2.7 Create basic enemy class with health and destructible components
+  - [ ] 2.8 Implement simple enemy spawning (geometric shapes) with wave management
+  - [ ] 2.9 Basic enemy movement toward cities with 3D pathfinding
+  - [ ] 2.10 Enemy destruction and scoring system
+  - [ ] 2.11 **Mass AI Integration:** Convert enemies to Mass AI entities with basic behaviors
+  - [ ] 2.12 **Object Pooling:** Implement enemy pooling for efficient spawning
 
 **Dependencies:** Day 1 foundation
 **Deliverable:** Basic combat loop with enemies moving toward cities, Mass AI entities functioning
@@ -66,17 +66,17 @@
 
 #### Morning (3 hours)
 - [ ] **XP System & Collection**
-  - Implement XP gems dropping from destroyed enemies with Niagara VFX
-  - Create Collector drone system (automatic collection) with Mass AI integration
-  - XP meter UI for Supply Drop progression
-  - Basic Supply Drop spawning mechanics
+  - [ ] 3.1 Implement XP gems dropping from destroyed enemies with Niagara VFX
+  - [ ] 3.2 Create Collector drone system (automatic collection) with Mass AI integration
+  - [ ] 3.3 XP meter UI for Supply Drop progression
+  - [ ] 3.4 Basic Supply Drop spawning mechanics
 
 #### Afternoon (3 hours)
 - [ ] **Supply Drop System**
-  - Implement Supply Drop landing mechanics with physics
-  - Create basic upgrade selection interface with bullet time effect
-  - Implement bullet time effect during selection (smooth slow-motion)
-  - 2-3 basic weapon upgrades (damage, fire rate, projectile speed)
+  - [ ] 3.5 Implement Supply Drop landing mechanics with physics
+  - [ ] 3.6 Create basic upgrade selection interface with bullet time effect
+  - [ ] 3.7 Implement bullet time effect during selection (smooth slow-motion)
+  - [ ] 3.8 2-3 basic weapon upgrades (damage, fire rate, projectile speed)
 
 **Dependencies:** Day 2 combat system
 **Deliverable:** Functional resource collection and upgrade system with bullet time
@@ -88,19 +88,19 @@
 
 #### Morning (3 hours)
 - [ ] **Enhanced Enemy AI**
-  - Implement different enemy types (Basic, Smart, Cluster, Boss missiles)
-  - Create behavior trees for complex enemy decision making
-  - Implement evasive maneuvers and target switching for Smart missiles
-  - **Mass AI Enhancement:** Implement shared AI knowledge base for coordinated targeting
-  - **Object Pooling:** Add specialized enemy pooling for different missile types
+  - [ ] 4.1 Implement different enemy types (Basic, Smart, Cluster, Boss missiles)
+  - [ ] 4.2 Create behavior trees for complex enemy decision making
+  - [ ] 4.3 Implement evasive maneuvers and target switching for Smart missiles
+  - [ ] 4.4 **Mass AI Enhancement:** Implement shared AI knowledge base for coordinated targeting
+  - [ ] 4.5 **Object Pooling:** Add specialized enemy pooling for different missile types
 
 #### Afternoon (3 hours)
 - [ ] **Mass AI Performance Optimization**
-  - Implement distance-based LOD for AI complexity reduction
-  - Create AI archetypes with distinct behavior patterns
-  - Performance monitoring and dynamic AI complexity adjustment
-  - **Performance Testing:** Stress test with 500+ total entities
-  - **Object Pooling:** Optimize pool sizes based on performance metrics
+  - [ ] 4.6 Implement distance-based LOD for AI complexity reduction
+  - [ ] 4.7 Create AI archetypes with distinct behavior patterns
+  - [ ] 4.8 Performance monitoring and dynamic AI complexity adjustment
+  - [ ] 4.9 **Performance Testing:** Stress test with 500+ total entities
+  - [ ] 4.10 **Object Pooling:** Optimize pool sizes based on performance metrics
 
 **Dependencies:** Day 3 resource system
 **Deliverable:** Advanced enemy AI with Mass AI optimization, 500+ entity performance
@@ -112,19 +112,19 @@
 
 #### Morning (3 hours)
 - [ ] **Automated Weapons**
-  - Implement automated weapon base class with AI targeting
-  - Create 1-2 automated weapon types (missile launcher, flak cannon)
-  - Basic AI targeting system with priority selection
-  - Weapon cooldown management and upgrade integration
-  - **Object Pooling:** Add automated weapon projectile pooling
+  - [ ] 5.1 Implement automated weapon base class with AI targeting
+  - [ ] 5.2 Create 1-2 automated weapon types (missile launcher, flak cannon)
+  - [ ] 5.3 Basic AI targeting system with priority selection
+  - [ ] 5.4 Weapon cooldown management and upgrade integration
+  - [ ] 5.5 **Object Pooling:** Add automated weapon projectile pooling
 
 #### Afternoon (3 hours)
 - [ ] **Resource Collection Enhancement**
-  - Implement Scavenger Rover system with destructible mechanics
-  - Create resource gathering from destroyed enemies
-  - Basic rover AI (move to resources, return to base) with Mass AI integration
-  - **Mass AI Integration:** Convert rovers to Mass AI entities with pathfinding
-  - **Performance Testing:** Validate 750+ entity performance targets
+  - [ ] 5.6 Implement Scavenger Rover system with destructible mechanics
+  - [ ] 5.7 Create resource gathering from destroyed enemies
+  - [ ] 5.8 Basic rover AI (move to resources, return to base) with Mass AI integration
+  - [ ] 5.9 **Mass AI Integration:** Convert rovers to Mass AI entities with pathfinding
+  - [ ] 5.10 **Performance Testing:** Validate 750+ entity performance targets
 
 **Dependencies:** Day 4 AI systems
 **Deliverable:** Automated defense systems and resource gathering with Mass AI rovers
@@ -136,20 +136,20 @@
 
 #### Morning (3 hours)
 - [ ] **Core UI Systems**
-  - Health bars for cities and rovers with smooth animations
-  - Resource counters (XP, Resources) with real-time updates
-  - Session timer display with visual countdown
-  - Basic minimap showing city positions and enemy locations
-  - **Performance Monitoring:** Add entity count and FPS display for debugging
+  - [ ] 6.1 Health bars for cities and rovers with smooth animations
+  - [ ] 6.2 Resource counters (XP, Resources) with real-time updates
+  - [ ] 6.3 Session timer display with visual countdown
+  - [ ] 6.4 Basic minimap showing city positions and enemy locations
+  - [ ] 6.5 **Performance Monitoring:** Add entity count and FPS display for debugging
 
 #### Afternoon (3 hours)
 - [ ] **Visual Polish & Effects**
-  - Implement advanced particle effects (explosions, trails, impacts) with Niagara
-  - Add geometric visual feedback for damage and destruction
-  - Basic sound effects (weapon fire, explosions) with 3D spatial audio
-  - Screen shake and visual feedback for impacts
-  - **Object Pooling:** Implement effect pooling for particle systems
-  - **Mass AI Optimization:** Fine-tune distance-based AI LOD system
+  - [ ] 6.6 Implement advanced particle effects (explosions, trails, impacts) with Niagara
+  - [ ] 6.7 Add geometric visual feedback for damage and destruction
+  - [ ] 6.8 Basic sound effects (weapon fire, explosions) with 3D spatial audio
+  - [ ] 6.9 Screen shake and visual feedback for impacts
+  - [ ] 6.10 **Object Pooling:** Implement effect pooling for particle systems
+  - [ ] 6.11 **Mass AI Optimization:** Fine-tune distance-based AI LOD system
 
 **Dependencies:** Days 1-5 core systems
 **Deliverable:** Polished visual experience with functional UI and performance monitoring
@@ -161,20 +161,20 @@
 
 #### Morning (3 hours)
 - [ ] **Meta-Progression Foundation**
-  - Implement save system for persistent data with error handling
-  - Create basic meta-upgrades (starting health, weapon damage, pool sizes)
-  - Between-session upgrade menu with visual feedback
-  - Resource spending system with validation
-  - **Mass AI Scaling:** Implement dynamic AI complexity based on meta-progression
+  - [ ] 7.1 Implement save system for persistent data with error handling
+  - [ ] 7.2 Create basic meta-upgrades (starting health, weapon damage, pool sizes)
+  - [ ] 7.3 Between-session upgrade menu with visual feedback
+  - [ ] 7.4 Resource spending system with validation
+  - [ ] 7.5 **Mass AI Scaling:** Implement dynamic AI complexity based on meta-progression
 
 #### Afternoon (3 hours)
 - [ ] **Game Balance & Difficulty**
-  - Implement wave-based enemy spawning with increasing complexity
-  - Difficulty scaling over time with adaptive AI behavior
-  - Balance weapon damage and enemy health based on meta-progression
-  - Test and adjust core gameplay loop
-  - **Performance Optimization:** Fine-tune object pooling sizes and Mass AI update rates
-  - **Stress Testing:** Validate 1000+ entity performance targets
+  - [ ] 7.6 Implement wave-based enemy spawning with increasing complexity
+  - [ ] 7.7 Difficulty scaling over time with adaptive AI behavior
+  - [ ] 7.8 Balance weapon damage and enemy health based on meta-progression
+  - [ ] 7.9 Test and adjust core gameplay loop
+  - [ ] 7.10 **Performance Optimization:** Fine-tune object pooling sizes and Mass AI update rates
+  - [ ] 7.11 **Stress Testing:** Validate 1000+ entity performance targets
 
 **Dependencies:** Days 1-6 all systems
 **Deliverable:** Balanced gameplay with meta-progression and save system
@@ -186,18 +186,18 @@
 
 #### Morning (3 hours)
 - [ ] **Commander Abilities**
-  - Implement tactical view for commander abilities
-  - Create basic commander abilities (area damage, time slow, resource boost)
-  - Seamless camera transitions for tactical view
-  - Ability cooldown and resource cost system
+  - [ ] 8.1 Implement tactical view for commander abilities
+  - [ ] 8.2 Create basic commander abilities (area damage, time slow, resource boost)
+  - [ ] 8.3 Seamless camera transitions for tactical view
+  - [ ] 8.4 Ability cooldown and resource cost system
 
 #### Afternoon (3 hours)
 - [ ] **Advanced Weapon Systems**
-  - Implement weapon upgrade and modification system
-  - Create modular weapon components (barrels, magazines, sights)
-  - Weapon synergy system for combined effects
-  - **Mass AI Enhancement:** Implement coordinated attack patterns for boss missiles
-  - **Performance Testing:** Maintain 1000+ entity performance with new features
+  - [ ] 8.5 Implement weapon upgrade and modification system
+  - [ ] 8.6 Create modular weapon components (barrels, magazines, sights)
+  - [ ] 8.7 Weapon synergy system for combined effects
+  - [ ] 8.8 **Mass AI Enhancement:** Implement coordinated attack patterns for boss missiles
+  - [ ] 8.9 **Performance Testing:** Maintain 1000+ entity performance with new features
 
 **Dependencies:** Days 1-7 core systems
 **Deliverable:** Advanced features with commander abilities and weapon customization
@@ -209,19 +209,19 @@
 
 #### Morning (3 hours)
 - [ ] **Performance Optimization**
-  - Comprehensive performance profiling and optimization
-  - Fine-tune Mass AI update frequencies and LOD thresholds
-  - Optimize object pooling sizes based on actual usage patterns
-  - Implement adaptive quality settings for different hardware
-  - **Stress Testing:** Final validation of 1000+ entity performance
+  - [ ] 9.1 Comprehensive performance profiling and optimization
+  - [ ] 9.2 Fine-tune Mass AI update frequencies and LOD thresholds
+  - [ ] 9.3 Optimize object pooling sizes based on actual usage patterns
+  - [ ] 9.4 Implement adaptive quality settings for different hardware
+  - [ ] 9.5 **Stress Testing:** Final validation of 1000+ entity performance
 
 #### Afternoon (3 hours)
 - [ ] **Final Polish & Bug Fixes**
-  - Fix critical bugs and crashes with comprehensive testing
-  - Optimize performance for target specs (consistent 60 FPS)
-  - Final balance adjustments based on playtesting
-  - **Mass AI & Pooling Final Tuning:** Optimize for maximum entity count performance
-  - **Demo Preparation:** Create stable build for final testing
+  - [ ] 9.6 Fix critical bugs and crashes with comprehensive testing
+  - [ ] 9.7 Optimize performance for target specs (consistent 60 FPS)
+  - [ ] 9.8 Final balance adjustments based on playtesting
+  - [ ] 9.9 **Mass AI & Pooling Final Tuning:** Optimize for maximum entity count performance
+  - [ ] 9.10 **Demo Preparation:** Create stable build for final testing
 
 **Dependencies:** All previous days
 **Deliverable:** Optimized and polished game ready for demo
@@ -233,19 +233,19 @@
 
 #### Morning (3 hours)
 - [ ] **Final Testing & Validation**
-  - Comprehensive playtesting of complete gameplay loop
-  - Performance validation across different hardware configurations
-  - Bug fixes and final polish based on testing feedback
-  - **Performance Validation:** Confirm 1000+ entity performance targets are met
-  - **Mass AI & Pooling Validation:** Ensure systems work reliably under stress
+  - [ ] 10.1 Comprehensive playtesting of complete gameplay loop
+  - [ ] 10.2 Performance validation across different hardware configurations
+  - [ ] 10.3 Bug fixes and final polish based on testing feedback
+  - [ ] 10.4 **Performance Validation:** Confirm 1000+ entity performance targets are met
+  - [ ] 10.5 **Mass AI & Pooling Validation:** Ensure systems work reliably under stress
 
 #### Afternoon (3 hours)
 - [ ] **Demo Preparation & Documentation**
-  - Create final demo build with all features
-  - Prepare demo presentation materials and gameplay footage
-  - Document key technical achievements (Mass AI, Object Pooling, Performance)
-  - Final playtesting and adjustments
-  - **Performance Monitoring:** Final validation of all performance targets
+  - [ ] 10.6 Create final demo build with all features
+  - [ ] 10.7 Prepare demo presentation materials and gameplay footage
+  - [ ] 10.8 Document key technical achievements (Mass AI, Object Pooling, Performance)
+  - [ ] 10.9 Final playtesting and adjustments
+  - [ ] 10.10 **Performance Monitoring:** Final validation of all performance targets
 
 **Dependencies:** All previous days
 **Deliverable:** Complete demo build ready for submission with documentation
@@ -341,71 +341,71 @@
 ## Daily Checkpoints
 
 ### End of Day 1
-- [ ] Can start a game session with timer
-- [ ] Cities have health bars and destructible components
-- [ ] Mouse input is responsive (<16ms lag)
-- [ ] Mass AI plugin is enabled and functional
-- [ ] Object pooling foundation is in place
+- [ ] 1.1.1 Can start a game session with timer
+- [ ] 1.1.2 Cities have health bars and destructible components
+- [ ] 1.1.3 Mouse input is responsive (<16ms lag)
+- [ ] 1.1.4 Mass AI plugin is enabled and functional
+- [ ] 1.1.5 Object pooling foundation is in place
 
 ### End of Day 2
-- [ ] Can fire weapons at enemies with physics
-- [ ] Enemies move toward cities with 3D pathfinding
-- [ ] Enemies can be destroyed with scoring
-- [ ] Mass AI entities are functioning properly
-- [ ] Object pooling is working for projectiles and enemies
-- [ ] Performance maintains 60 FPS with 100+ entities
+- [ ] 2.1.1 Can fire weapons at enemies with physics
+- [ ] 2.1.2 Enemies move toward cities with 3D pathfinding
+- [ ] 2.1.3 Enemies can be destroyed with scoring
+- [ ] 2.1.4 Mass AI entities are functioning properly
+- [ ] 2.1.5 Object pooling is working for projectiles and enemies
+- [ ] 2.1.6 Performance maintains 60 FPS with 100+ entities
 
 ### End of Day 3
-- [ ] XP drops from enemies with Niagara VFX
-- [ ] Collectors gather XP automatically
-- [ ] Supply drops spawn and can be selected
-- [ ] Bullet time effect works during upgrade selection
-- [ ] Upgrades affect weapon performance
+- [ ] 3.1.1 XP drops from enemies with Niagara VFX
+- [ ] 3.1.2 Collectors gather XP automatically
+- [ ] 3.1.3 Supply drops spawn and can be selected
+- [ ] 3.1.4 Bullet time effect works during upgrade selection
+- [ ] 3.1.5 Upgrades affect weapon performance
 
 ### End of Day 4
-- [ ] Different enemy types with distinct behaviors
-- [ ] Shared AI knowledge base is coordinating targeting
-- [ ] Distance-based LOD is reducing AI complexity
-- [ ] Mass AI performance is optimized
-- [ ] Performance maintains 60 FPS with 500+ entities
+- [ ] 4.1.1 Different enemy types with distinct behaviors
+- [ ] 4.1.2 Shared AI knowledge base is coordinating targeting
+- [ ] 4.1.3 Distance-based LOD is reducing AI complexity
+- [ ] 4.1.4 Mass AI performance is optimized
+- [ ] 4.1.5 Performance maintains 60 FPS with 500+ entities
 
 ### End of Day 5
-- [ ] Automated weapons fire independently with AI targeting
-- [ ] Rovers collect resources with Mass AI pathfinding
-- [ ] Rovers can be destroyed and replaced
-- [ ] Resource economy is functional
-- [ ] Performance maintains 60 FPS with 750+ entities
+- [ ] 5.1.1 Automated weapons fire independently with AI targeting
+- [ ] 5.1.2 Rovers collect resources with Mass AI pathfinding
+- [ ] 5.1.3 Rovers can be destroyed and replaced
+- [ ] 5.1.4 Resource economy is functional
+- [ ] 5.1.5 Performance maintains 60 FPS with 750+ entities
 
 ### End of Day 6
-- [ ] UI shows all important information clearly
-- [ ] Visual feedback is clear and responsive
-- [ ] Niagara particle effects are optimized
-- [ ] Game feels polished and professional
-- [ ] Performance monitoring is functional
+- [ ] 6.1.1 UI shows all important information clearly
+- [ ] 6.1.2 Visual feedback is clear and responsive
+- [ ] 6.1.3 Niagara particle effects are optimized
+- [ ] 6.1.4 Game feels polished and professional
+- [ ] 6.1.5 Performance monitoring is functional
 
 ### End of Day 7
-- [ ] Meta-progression saves between sessions
-- [ ] Game difficulty scales appropriately
-- [ ] Core loop is balanced and fun
-- [ ] Mass AI complexity scales with meta-progression
-- [ ] Object pooling sizes are optimized
-- [ ] Performance maintains 60 FPS with 1000+ entities
+- [ ] 7.1.1 Meta-progression saves between sessions
+- [ ] 7.1.2 Game difficulty scales appropriately
+- [ ] 7.1.3 Core loop is balanced and fun
+- [ ] 7.1.4 Mass AI complexity scales with meta-progression
+- [ ] 7.1.5 Object pooling sizes are optimized
+- [ ] 7.1.6 Performance maintains 60 FPS with 1000+ entities
 
 ### End of Day 8
-- [ ] Commander abilities work with tactical view
-- [ ] Weapon customization system is functional
-- [ ] Advanced features enhance gameplay
-- [ ] Performance remains stable with new features
+- [ ] 8.1.1 Commander abilities work with tactical view
+- [ ] 8.1.2 Weapon customization system is functional
+- [ ] 8.1.3 Advanced features enhance gameplay
+- [ ] 8.1.4 Performance remains stable with new features
 
 ### End of Day 9
-- [ ] Performance is optimized across all systems
-- [ ] Mass AI and Object Pooling are finely tuned
-- [ ] Game is polished and bug-free
-- [ ] All performance targets are met
+- [ ] 9.1.1 Performance is optimized across all systems
+- [ ] 9.1.2 Mass AI and Object Pooling are finely tuned
+- [ ] 9.1.3 Game is polished and bug-free
+- [ ] 9.1.4 All performance targets are met
 
 ### End of Day 10
-- [ ] Demo build is stable and complete
-- [ ] Performance meets all targets consistently
-- [ ] Complete gameplay loop is compelling
-- [ ] Documentation is complete
-- [ ] Ready for submission with confidence 
+- [ ] 10.1.1 Demo build is stable and complete
+- [ ] 10.1.2 Performance meets all targets consistently
+- [ ] 10.1.3 Complete gameplay loop is compelling
+- [ ] 10.1.4 Documentation is complete
+- [ ] 10.1.5 Ready for submission with confidence 
