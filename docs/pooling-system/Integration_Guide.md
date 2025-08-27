@@ -40,10 +40,9 @@ PoolingSystem/
 └── PoolingTypes.h
 ```
 
-### Step 2: Update Build Configuration
-Add the pooling system to your project's build configuration:
+### Step 2: Verify Build Configuration
+The pooling system uses standard Unreal Engine modules that are typically already included. Verify your `Source/YourProject/YourProject.Build.cs` includes:
 
-**In `Source/YourProject/YourProject.Build.cs`:**
 ```csharp
 public class YourProject : ModuleRules
 {
@@ -56,50 +55,19 @@ public class YourProject : ModuleRules
             "CoreUObject", 
             "Engine", 
             "InputCore"
-            // HAL is included automatically in UE5, but can be added explicitly if needed:
-            // "HAL" // Required for thread safety features
         });
         
-        PrivateDependencyModuleNames.AddRange(new string[] { });
+        // HAL is included automatically in UE5 for thread safety features
+        // No additional modules needed for the pooling system
     }
 }
 ```
 
-### Step 3: Update Module Header
-**In `Source/YourProject/YourProject.h`:**
-```cpp
-#pragma once
+**Note:** The pooling system is designed to work with standard Unreal Engine modules. No additional module dependencies are required.
 
-#include "CoreMinimal.h"
-#include "Modules/ModuleManager.h"
+**Important:** Most Unreal Engine projects use the default module system (`FDefaultGameModuleImpl`). Custom module setup is only needed for plugins or special cases. The pooling system works with the standard project structure.
 
-class FYourProjectModule : public IModuleInterface
-{
-public:
-    virtual void StartupModule() override;
-    virtual void ShutdownModule() override;
-};
-```
-
-**In `Source/YourProject/YourProject.cpp`:**
-```cpp
-#include "YourProject.h"
-#include "Modules/ModuleManager.h"
-
-IMPLEMENT_PRIMARY_GAME_MODULE(FYourProjectModule, YourProject, "YourProject");
-
-void FYourProjectModule::StartupModule()
-{
-    // Initialize pooling system if needed
-}
-
-void FYourProjectModule::ShutdownModule()
-{
-    // Cleanup pooling system if needed
-}
-```
-
-### Step 4: Update Game Instance
+### Step 3: Update Game Instance
 Create a custom Game Instance that inherits from `UGWIZGameInstance`:
 
 **In `Source/YourProject/YourGameInstance.h`:**
