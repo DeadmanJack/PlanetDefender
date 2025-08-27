@@ -234,9 +234,9 @@ void UGWIZGameInstance::SavePoolConfigurations()
     
     for (UGWIZObjectPool* Pool : AllPools)
     {
-        if (Pool != nullptr && Pool->PooledObjectClass != nullptr)
+        if (Pool != nullptr && Pool->GetPooledObjectClass() != nullptr)
         {
-            FString ClassName = Pool->PooledObjectClass->GetName();
+            FString ClassName = Pool->GetPooledObjectClass()->GetName();
             PersistentPoolConfigs.Add(ClassName, Pool->Config);
         }
     }
@@ -274,9 +274,9 @@ void UGWIZGameInstance::SetupPoolsForLevel(const FString& LevelName)
     // Check if we have level-specific configurations
     if (LevelPoolConfigs.Contains(LevelName))
     {
-        const TMap<FString, FGWIZPoolConfig>& LevelConfigs = LevelPoolConfigs[LevelName];
+        const FGWIZLevelPoolConfigs& LevelConfigs = LevelPoolConfigs[LevelName];
         
-        for (const auto& ConfigPair : LevelConfigs)
+        for (const auto& ConfigPair : LevelConfigs.PoolConfigs)
         {
             const FString& ClassName = ConfigPair.Key;
             const FGWIZPoolConfig& Config = ConfigPair.Value;
@@ -318,11 +318,11 @@ void UGWIZGameInstance::SerializePoolState()
         const FGWIZPoolConfig& Config = ConfigPair.Value;
         
         TSharedPtr<FJsonObject> ConfigObject = MakeShareable(new FJsonObject);
-        ConfigObject->SetNumberField("MinPoolSize", Config.MinPoolSize);
-        ConfigObject->SetNumberField("MaxPoolSize", Config.MaxPoolSize);
-        ConfigObject->SetNumberField("InitialPoolSize", Config.InitialPoolSize);
-        ConfigObject->SetNumberField("Priority", static_cast<double>(Config.Priority));
-        ConfigObject->SetStringField("Category", Config.Category);
+        ConfigObject->SetNumberField(TEXT("MinPoolSize"), Config.MinPoolSize);
+        ConfigObject->SetNumberField(TEXT("MaxPoolSize"), Config.MaxPoolSize);
+        ConfigObject->SetNumberField(TEXT("InitialPoolSize"), Config.InitialPoolSize);
+        ConfigObject->SetNumberField(TEXT("Priority"), static_cast<double>(Config.Priority));
+        ConfigObject->SetStringField(TEXT("Category"), Config.Category);
         
         ConfigsObject->SetObjectField(ClassName, ConfigObject);
     }
@@ -333,20 +333,20 @@ void UGWIZGameInstance::SerializePoolState()
     for (const auto& LevelPair : LevelPoolConfigs)
     {
         const FString& LevelName = LevelPair.Key;
-        const TMap<FString, FGWIZPoolConfig>& LevelConfigs = LevelPair.Value;
+        const FGWIZLevelPoolConfigs& LevelConfigs = LevelPair.Value;
         
         TSharedPtr<FJsonObject> LevelObject = MakeShareable(new FJsonObject);
-        for (const auto& ConfigPair : LevelConfigs)
+        for (const auto& ConfigPair : LevelConfigs.PoolConfigs)
         {
             const FString& ClassName = ConfigPair.Key;
             const FGWIZPoolConfig& Config = ConfigPair.Value;
             
             TSharedPtr<FJsonObject> ConfigObject = MakeShareable(new FJsonObject);
-            ConfigObject->SetNumberField("MinPoolSize", Config.MinPoolSize);
-            ConfigObject->SetNumberField("MaxPoolSize", Config.MaxPoolSize);
-            ConfigObject->SetNumberField("InitialPoolSize", Config.InitialPoolSize);
-            ConfigObject->SetNumberField("Priority", static_cast<double>(Config.Priority));
-            ConfigObject->SetStringField("Category", Config.Category);
+            ConfigObject->SetNumberField(TEXT("MinPoolSize"), Config.MinPoolSize);
+            ConfigObject->SetNumberField(TEXT("MaxPoolSize"), Config.MaxPoolSize);
+            ConfigObject->SetNumberField(TEXT("InitialPoolSize"), Config.InitialPoolSize);
+            ConfigObject->SetNumberField(TEXT("Priority"), static_cast<double>(Config.Priority));
+            ConfigObject->SetStringField(TEXT("Category"), Config.Category);
             
             LevelObject->SetObjectField(ClassName, ConfigObject);
         }
@@ -391,7 +391,7 @@ void UGWIZGameInstance::DeserializePoolState()
     
     // Deserialize persistent pool configurations
     const TSharedPtr<FJsonObject>* ConfigsObject;
-    if (RootObject->TryGetObjectField("PoolConfigs", ConfigsObject))
+    if (RootObject->TryGetObjectField(TEXT("PoolConfigs"), ConfigsObject))
     {
         for (const auto& ConfigPair : (*ConfigsObject)->Values)
         {
@@ -403,11 +403,11 @@ void UGWIZGameInstance::DeserializePoolState()
                 TSharedPtr<FJsonObject> ConfigObject = ConfigValue->AsObject();
                 
                 FGWIZPoolConfig Config;
-                Config.MinPoolSize = ConfigObject->GetIntegerField("MinPoolSize");
-                Config.MaxPoolSize = ConfigObject->GetIntegerField("MaxPoolSize");
-                Config.InitialPoolSize = ConfigObject->GetIntegerField("InitialPoolSize");
-                Config.Priority = static_cast<uint8>(ConfigObject->GetNumberField("Priority"));
-                Config.Category = ConfigObject->GetStringField("Category");
+                Config.MinPoolSize = ConfigObject->GetIntegerField(TEXT("MinPoolSize"));
+                Config.MaxPoolSize = ConfigObject->GetIntegerField(TEXT("MaxPoolSize"));
+                Config.InitialPoolSize = ConfigObject->GetIntegerField(TEXT("InitialPoolSize"));
+                Config.Priority = static_cast<uint8>(ConfigObject->GetNumberField(TEXT("Priority")));
+                Config.Category = ConfigObject->GetStringField(TEXT("Category"));
                 
                 PersistentPoolConfigs.Add(ClassName, Config);
             }
@@ -416,7 +416,7 @@ void UGWIZGameInstance::DeserializePoolState()
     
     // Deserialize level-specific configurations
     const TSharedPtr<FJsonObject>* LevelConfigsObject;
-    if (RootObject->TryGetObjectField("LevelConfigs", LevelConfigsObject))
+    if (RootObject->TryGetObjectField(TEXT("LevelConfigs"), LevelConfigsObject))
     {
         for (const auto& LevelPair : (*LevelConfigsObject)->Values)
         {
@@ -426,7 +426,7 @@ void UGWIZGameInstance::DeserializePoolState()
             if (LevelValue->Type == EJson::Object)
             {
                 TSharedPtr<FJsonObject> LevelObject = LevelValue->AsObject();
-                TMap<FString, FGWIZPoolConfig> LevelConfigs;
+                FGWIZLevelPoolConfigs LevelConfigs;
                 
                 for (const auto& ConfigPair : LevelObject->Values)
                 {
@@ -438,13 +438,13 @@ void UGWIZGameInstance::DeserializePoolState()
                         TSharedPtr<FJsonObject> ConfigObject = ConfigValue->AsObject();
                         
                         FGWIZPoolConfig Config;
-                        Config.MinPoolSize = ConfigObject->GetIntegerField("MinPoolSize");
-                        Config.MaxPoolSize = ConfigObject->GetIntegerField("MaxPoolSize");
-                        Config.InitialPoolSize = ConfigObject->GetIntegerField("InitialPoolSize");
-                        Config.Priority = static_cast<uint8>(ConfigObject->GetNumberField("Priority"));
-                        Config.Category = ConfigObject->GetStringField("Category");
+                        Config.MinPoolSize = ConfigObject->GetIntegerField(TEXT("MinPoolSize"));
+                        Config.MaxPoolSize = ConfigObject->GetIntegerField(TEXT("MaxPoolSize"));
+                        Config.InitialPoolSize = ConfigObject->GetIntegerField(TEXT("InitialPoolSize"));
+                        Config.Priority = static_cast<uint8>(ConfigObject->GetNumberField(TEXT("Priority")));
+                        Config.Category = ConfigObject->GetStringField(TEXT("Category"));
                         
-                        LevelConfigs.Add(ClassName, Config);
+                        LevelConfigs.SetPoolConfig(ClassName, Config);
                     }
                 }
                 

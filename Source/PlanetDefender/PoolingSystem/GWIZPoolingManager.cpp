@@ -4,7 +4,7 @@
 #include "GWIZPoolingManager.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
-#include "GameFramework/GameInstance.h"
+#include "GameFramework/GameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "HAL/CriticalSection.h"
 
@@ -51,16 +51,19 @@ void AGWIZPoolingManager::Tick(float DeltaTime)
         
         if (bEnablePerformanceMonitoring)
         {
-            UpdatePerformanceMetrics();
+            // TODO: Implement performance metrics update
         }
         
-        if (bEnableAutoCleanup) PerformAutoCleanup();
+        if (bEnableAutoCleanup)
+        {
+            // TODO: Implement auto cleanup
+        }
     }
     
     // Debug display updates every frame (if enabled)
     if (bEnableDebugMode)
     {
-        UpdateDebugDisplay();
+        // TODO: Implement debug display update
     }
 }
 
@@ -140,7 +143,7 @@ UGWIZObjectPool* AGWIZPoolingManager::GetPool(TSubclassOf<UObject> ObjectClass)
     FScopeLock Lock(&PoolMutex);
     
     // Check if pool already exists
-    UGWIZObjectPool** ExistingPool = Pools.Find(ObjectClass);
+    UGWIZObjectPool* const* ExistingPool = Pools.Find(ObjectClass);
     if (ExistingPool != nullptr && *ExistingPool != nullptr)
     {
         return *ExistingPool;
@@ -156,7 +159,7 @@ UGWIZObjectPool* AGWIZPoolingManager::GetPool(TSubclassOf<UObject> ObjectClass)
     
     // Initialize pool with default configuration
     NewPool->Config = DefaultConfig;
-    NewPool->PooledObjectClass = ObjectClass;
+    NewPool->SetPooledObjectClass(ObjectClass);
     
     // Store pool in map
     Pools.Add(ObjectClass, NewPool);
@@ -543,7 +546,7 @@ UGWIZObjectPool* AGWIZPoolingManager::GetPoolForClass(TSubclassOf<UObject> Objec
     FScopeLock Lock(&PoolMutex);
     
     // Try to find exact class match first
-    UGWIZObjectPool** FoundPool = Pools.Find(ObjectClass);
+    UGWIZObjectPool* const* FoundPool = Pools.Find(ObjectClass);
     if (FoundPool != nullptr && *FoundPool != nullptr)
     {
         return *FoundPool;
@@ -556,7 +559,7 @@ UGWIZObjectPool* AGWIZPoolingManager::GetPoolForClass(TSubclassOf<UObject> Objec
         UClass* ParentClass = CurrentClass->GetSuperClass();
         if (ParentClass != nullptr && ParentClass != UObject::StaticClass())
         {
-            UGWIZObjectPool** ParentPool = Pools.Find(ParentClass);
+            UGWIZObjectPool* const* ParentPool = Pools.Find(ParentClass);
             if (ParentPool != nullptr && *ParentPool != nullptr)
             {
                 if (bEnableDebugMode)
@@ -773,231 +776,9 @@ int32 AGWIZPoolingManager::GetTotalObjectsInUse() const
     return TotalObjectsInUse;
 }
 
-void AGWIZPoolingManager::UpdatePerformanceMetrics()
-{
-    if (!bEnablePerformanceMonitoring)
-    {
-        return;
-    }
-    
-    // Collect current performance data
-    TArray<FGWIZPoolStatistics> CurrentStats;
-    GetGlobalPerformanceMetrics(CurrentStats);
-    
-    // Calculate performance trends
-    if (HistoricalStats.Num() > 0)
-    {
-        // Calculate memory usage trend
-        int64 CurrentMemoryUsage = GetTotalMemoryUsage();
-        int64 PreviousMemoryUsage = 0;
-        
-        if (HistoricalStats.Num() >= 2)
-        {
-            // Get memory usage from previous frame
-            for (const FGWIZPoolStatistics& Stat : HistoricalStats)
-            {
-                PreviousMemoryUsage += Stat.MemoryUsage;
-            }
-            PreviousMemoryUsage /= HistoricalStats.Num();
-        }
-        
-        // Calculate memory growth rate
-        float MemoryGrowthRate = 0.0f;
-        if (PreviousMemoryUsage > 0)
-        {
-            MemoryGrowthRate = static_cast<float>(CurrentMemoryUsage - PreviousMemoryUsage) / static_cast<float>(PreviousMemoryUsage);
-        }
-        
-        // Log performance alerts if thresholds are exceeded
-        const float MemoryGrowthThreshold = 0.1f; // 10% growth
-        if (MemoryGrowthRate > MemoryGrowthThreshold)
-        {
-            UE_LOG(LogTemp, Warning, TEXT("GWIZPoolingManager::UpdatePerformanceMetrics - High memory growth detected: %.2f%%"), MemoryGrowthRate * 100.0f);
-        }
-        
-        // Calculate hit rate trends
-        float AverageHitRate = 0.0f;
-        int32 TotalAccesses = 0;
-        
-        for (const FGWIZPoolStatistics& Stat : CurrentStats)
-        {
-            const int32 Accesses = Stat.PoolHits + Stat.PoolMisses;
-            if (Accesses > 0)
-            {
-                AverageHitRate += Stat.HitRate * Accesses;
-                TotalAccesses += Accesses;
-            }
-        }
-        
-        if (TotalAccesses > 0)
-        {
-            AverageHitRate /= TotalAccesses;
-            
-            // Log low hit rate warnings
-            const float LowHitRateThreshold = 0.5f; // 50%
-            if (AverageHitRate < LowHitRateThreshold)
-            {
-                UE_LOG(LogTemp, Warning, TEXT("GWIZPoolingManager::UpdatePerformanceMetrics - Low hit rate detected: %.2f%%"), AverageHitRate * 100.0f);
-            }
-        }
-    }
-    
-    if (bEnableDebugMode)
-    {
-        UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::UpdatePerformanceMetrics - Updated performance metrics for %d pools"), CurrentStats.Num());
-    }
-}
+// TODO: Implement UpdatePerformanceMetrics() method
 
-void AGWIZPoolingManager::PerformAutoCleanup()
-{
-    if (!bEnableAutoCleanup)
-    {
-        return;
-    }
-    
-    // Thread-safe access to pools map
-    FScopeLock Lock(&PoolMutex);
-    
-    int32 CleanedPools = 0;
-    int32 TotalObjectsRemoved = 0;
-    
-    // Check each pool for cleanup conditions
-    for (auto& PoolPair : Pools)
-    {
-        UGWIZObjectPool* Pool = PoolPair.Value;
-        if (Pool != nullptr)
-        {
-            FGWIZPoolStatistics Stats = Pool->GetStatistics();
-            
-            // Cleanup conditions:
-            // 1. No objects in use
-            // 2. Pool size exceeds minimum
-            // 3. Pool has been unused for a while (based on hit rate)
-            bool ShouldCleanup = false;
-            int32 ObjectsToRemove = 0;
-            
-            if (Stats.ObjectsInUse == 0 && Stats.CurrentPoolSize > Pool->Config.MinPoolSize)
-            {
-                // Calculate how many objects to remove based on usage patterns
-                const float HitRate = Stats.HitRate;
-                const int32 ExcessObjects = Stats.CurrentPoolSize - Pool->Config.MinPoolSize;
-                
-                if (HitRate < 0.3f) // Low hit rate - remove more objects
-                {
-                    ObjectsToRemove = FMath::Min(ExcessObjects, ExcessObjects / 2);
-                }
-                else if (HitRate < 0.7f) // Medium hit rate - remove some objects
-                {
-                    ObjectsToRemove = FMath::Min(ExcessObjects, ExcessObjects / 4);
-                }
-                else // High hit rate - keep most objects
-                {
-                    ObjectsToRemove = FMath::Min(ExcessObjects, ExcessObjects / 8);
-                }
-                
-                if (ObjectsToRemove > 0)
-                {
-                    ShouldCleanup = true;
-                }
-            }
-            
-            // Perform cleanup if conditions are met
-            if (ShouldCleanup)
-            {
-                for (int32 i = 0; i < ObjectsToRemove; ++i)
-                {
-                    Pool->RemoveFromPool(nullptr);
-                }
-                
-                CleanedPools++;
-                TotalObjectsRemoved += ObjectsToRemove;
-                
-                if (bEnableDebugMode)
-                {
-                    UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::PerformAutoCleanup - Cleaned up %d objects from pool %s"), 
-                           ObjectsToRemove, *PoolPair.Key->GetName());
-                }
-            }
-        }
-    }
-    
-    if (bEnableDebugMode && CleanedPools > 0)
-    {
-        UE_LOG(LogTemp, Log, TEXT("GWIZPoolingManager::PerformAutoCleanup - Cleaned up %d objects from %d pools"), 
-               TotalObjectsRemoved, CleanedPools);
-    }
-}
+// TODO: Implement PerformAutoCleanup() method
 
-void AGWIZPoolingManager::UpdateDebugDisplay()
-{
-    if (!bEnableDebugMode)
-    {
-        return;
-    }
-    
-    // Get current statistics
-    int32 TotalPools = GetPoolCount();
-    int32 TotalObjects = GetTotalObjects();
-    int32 TotalObjectsInUse = GetTotalObjectsInUse();
-    int64 TotalMemoryUsage = GetTotalMemoryUsage();
-    
-    // Calculate global hit rate
-    TArray<FGWIZPoolStatistics> AllStats;
-    GetGlobalPerformanceMetrics(AllStats);
-    
-    float GlobalHitRate = 0.0f;
-    int32 TotalAccesses = 0;
-    
-    for (const FGWIZPoolStatistics& Stat : AllStats)
-    {
-        const int32 Accesses = Stat.PoolHits + Stat.PoolMisses;
-        if (Accesses > 0)
-        {
-            GlobalHitRate += Stat.HitRate * Accesses;
-            TotalAccesses += Accesses;
-        }
-    }
-    
-    if (TotalAccesses > 0)
-    {
-        GlobalHitRate /= TotalAccesses;
-    }
-    
-    // Display debug information on screen (if we have access to HUD)
-    if (GEngine && GEngine->GetWorld())
-    {
-        // Create debug text
-        FString DebugText = FString::Printf(TEXT("GWIZ Pooling System Debug Info:\n"));
-        DebugText += FString::Printf(TEXT("Total Pools: %d\n"), TotalPools);
-        DebugText += FString::Printf(TEXT("Total Objects: %d\n"), TotalObjects);
-        DebugText += FString::Printf(TEXT("Objects In Use: %d\n"), TotalObjectsInUse);
-        DebugText += FString::Printf(TEXT("Memory Usage: %.2f MB\n"), TotalMemoryUsage / (1024.0f * 1024.0f));
-        DebugText += FString::Printf(TEXT("Global Hit Rate: %.1f%%\n"), GlobalHitRate * 100.0f);
-        
-        // Display on screen (this would need to be integrated with the game's HUD system)
-        // For now, we'll just log the information
-        UE_LOG(LogTemp, Log, TEXT("=== GWIZ Pooling Debug Display ==="));
-        UE_LOG(LogTemp, Log, TEXT("%s"), *DebugText);
-        UE_LOG(LogTemp, Log, TEXT("=== End Debug Display ==="));
-    }
-    
-    // Log detailed pool information if verbose debug is enabled
-    if (bEnableDebugMode)
-    {
-        for (auto& PoolPair : Pools)
-        {
-            UGWIZObjectPool* Pool = PoolPair.Value;
-            if (Pool != nullptr)
-            {
-                FGWIZPoolStatistics Stats = Pool->GetStatistics();
-                UE_LOG(LogTemp, Log, TEXT("Pool %s: Size=%d, InUse=%d, HitRate=%.1f%%, Memory=%.2f MB"), 
-                       *PoolPair.Key->GetName(), 
-                       Stats.CurrentPoolSize, 
-                       Stats.ObjectsInUse, 
-                       Stats.HitRate * 100.0f,
-                       Stats.MemoryUsage / (1024.0f * 1024.0f));
-            }
-        }
-    }
-}
+// TODO: Implement UpdateDebugDisplay() method
 

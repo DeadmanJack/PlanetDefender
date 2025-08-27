@@ -4,7 +4,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "TestFramework/AutomationTest.h"
+#include "Misc/AutomationTest.h"
 #include "PoolingSystem/GWIZObjectPool.h"
 #include "PoolingSystem/PoolingTypes.h"
 

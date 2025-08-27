@@ -125,6 +125,68 @@ public:
     UFUNCTION(BlueprintCallable, Category = "GWIZ Pooling")
     bool IsPoolFull() const;
 
+    /**
+     * Get the class type this pool manages.
+     * @return Class type of pooled objects
+     */
+    UFUNCTION(BlueprintCallable, Category = "GWIZ Pooling")
+    TSubclassOf<UObject> GetPooledObjectClass() const { return PooledObjectClass; }
+
+    /**
+     * Set the class type this pool manages.
+     * @param ObjectClass Class type to set
+     */
+    void SetPooledObjectClass(TSubclassOf<UObject> ObjectClass) { PooledObjectClass = ObjectClass; }
+
+    /**
+     * Initialize the pool with initial objects.
+     */
+    UFUNCTION(BlueprintCallable, Category = "GWIZ Pooling")
+    void InitializePool();
+
+    /**
+     * Check if pool is initialized.
+     * @return true if pool is initialized, false otherwise
+     */
+    UFUNCTION(BlueprintCallable, Category = "GWIZ Pooling")
+    bool IsInitialized() const { return bIsInitialized; }
+
+    /**
+     * Configure pool with new settings.
+     * @param NewConfig New configuration to apply
+     */
+    UFUNCTION(BlueprintCallable, Category = "GWIZ Pooling")
+    void ConfigurePool(const FGWIZPoolConfig& NewConfig);
+
+    /**
+     * Shrink pool to minimum size.
+     */
+    UFUNCTION(BlueprintCallable, Category = "GWIZ Pooling")
+    void ShrinkToMinimum();
+
+    /**
+     * Get object from pool (alias for GetObject).
+     * @return Object from pool or newly created object
+     */
+    UFUNCTION(BlueprintCallable, Category = "GWIZ Pooling")
+    UObject* GetFromPool() { return GetObject(PooledObjectClass); }
+
+    /**
+     * Return object to pool (alias for ReturnObject).
+     * @param Object Object to return to pool
+     */
+    UFUNCTION(BlueprintCallable, Category = "GWIZ Pooling")
+    void ReturnToPool(UObject* Object) { ReturnObject(Object); }
+
+    /**
+     * Get the current pool size.
+     * @return Current number of objects in the pool
+     */
+    UFUNCTION(BlueprintCallable, Category = "GWIZ Pooling")
+    int32 GetCurrentPoolSize() const { return AvailableObjects.Num(); }
+
+
+
 protected:
     /** Array of available objects in the pool */
     UPROPERTY()

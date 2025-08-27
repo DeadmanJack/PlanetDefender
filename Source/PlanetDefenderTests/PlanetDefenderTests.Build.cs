@@ -9,7 +9,7 @@ public class PlanetDefenderTests : ModuleRules
     {
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "AutomationTest" });
         
         PrivateDependencyModuleNames.AddRange(new string[] { "PlanetDefender" });
         
@@ -19,5 +19,8 @@ public class PlanetDefenderTests : ModuleRules
         // Enable testing
         bEnableUndefinedIdentifierWarnings = false;
         bTreatAsEngineModule = false;
+        
+        // Include paths for main module headers
+        PublicIncludePaths.AddRange(new string[] { "PlanetDefender" });
     }
 }

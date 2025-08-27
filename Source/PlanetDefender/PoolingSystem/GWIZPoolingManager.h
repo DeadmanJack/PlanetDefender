@@ -120,8 +120,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Pooling")
 	FGWIZPoolConfig DefaultConfig;
 
-	// Thread safety mutex
-	FCriticalSection PoolMutex;
+	// Thread safety mutex (mutable for const methods)
+	mutable FCriticalSection PoolMutex;
 
 	// Performance monitoring data
 	TArray<FGWIZPoolStatistics> HistoricalStats;

@@ -6,6 +6,7 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "PoolingSystem/GWIZPoolingManager.h"
+#include "PoolingSystem/PoolingTypes.h"
 #include "GWIZGameInstance.generated.h"
 
 /**
@@ -56,7 +57,7 @@ protected:
 
     // Level-specific pool configurations
     UPROPERTY()
-    TMap<FString, TMap<FString, FGWIZPoolConfig>> LevelPoolConfigs;
+    TMap<FString, FGWIZLevelPoolConfigs> LevelPoolConfigs;
 
     // Pooling system initialization state
     UPROPERTY()

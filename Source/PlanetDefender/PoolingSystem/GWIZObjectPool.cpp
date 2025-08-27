@@ -363,3 +363,56 @@ bool UGWIZObjectPool::ValidateObject(UObject* Object) const
 
     return true;
 }
+
+void UGWIZObjectPool::InitializePool()
+{
+    if (bIsInitialized)
+    {
+        LogDebug(TEXT("InitializePool: Pool already initialized"));
+        return;
+    }
+
+    if (!PooledObjectClass)
+    {
+        LogDebug(TEXT("InitializePool: No object class set"));
+        return;
+    }
+
+    // Create initial objects
+    for (int32 i = 0; i < Config.InitialPoolSize; ++i)
+    {
+        UObject* Object = CreateNewObject();
+        if (Object)
+        {
+            AvailableObjects.Add(Object);
+        }
+    }
+
+    bIsInitialized = true;
+    UpdateStatistics();
+    
+    LogDebug(FString::Printf(TEXT("InitializePool: Initialized with %d objects"), AvailableObjects.Num()));
+}
+
+void UGWIZObjectPool::ConfigurePool(const FGWIZPoolConfig& NewConfig)
+{
+    Config = NewConfig;
+    LogDebug(TEXT("ConfigurePool: Configuration updated"));
+}
+
+void UGWIZObjectPool::ShrinkToMinimum()
+{
+    if (!bIsInitialized)
+    {
+        return;
+    }
+
+    // Remove excess objects beyond minimum size
+    while (AvailableObjects.Num() > Config.MinPoolSize)
+    {
+        AvailableObjects.Pop();
+    }
+
+    UpdateStatistics();
+    LogDebug(FString::Printf(TEXT("ShrinkToMinimum: Shrunk to %d objects"), AvailableObjects.Num()));
+}

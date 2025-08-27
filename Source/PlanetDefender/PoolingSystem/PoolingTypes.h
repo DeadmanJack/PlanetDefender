@@ -162,3 +162,52 @@ public:
         LastUpdateTime = 0.0f;
     }
 };
+
+/**
+ * Wrapper struct for level-specific pool configurations.
+ * This is needed because UHT cannot handle nested TMap types.
+ */
+USTRUCT(BlueprintType)
+struct PLANETDEFENDER_API FGWIZLevelPoolConfigs
+{
+    GENERATED_BODY()
+
+public:
+    FGWIZLevelPoolConfigs() = default;
+
+    /** Map of pool configurations for this level */
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GWIZ Pooling")
+    TMap<FString, FGWIZPoolConfig> PoolConfigs;
+
+    /** Get a pool configuration by name */
+    const FGWIZPoolConfig* GetPoolConfig(const FString& PoolName) const
+    {
+        return PoolConfigs.Find(PoolName);
+    }
+
+    /** Set a pool configuration */
+    void SetPoolConfig(const FString& PoolName, const FGWIZPoolConfig& Config)
+    {
+        PoolConfigs.Add(PoolName, Config);
+    }
+
+    /** Remove a pool configuration */
+    void RemovePoolConfig(const FString& PoolName)
+    {
+        PoolConfigs.Remove(PoolName);
+    }
+
+    /** Check if a pool configuration exists */
+    bool HasPoolConfig(const FString& PoolName) const
+    {
+        return PoolConfigs.Contains(PoolName);
+    }
+
+    /** Get all pool names */
+    TArray<FString> GetPoolNames() const
+    {
+        TArray<FString> Names;
+        PoolConfigs.GetKeys(Names);
+        return Names;
+    }
+};
