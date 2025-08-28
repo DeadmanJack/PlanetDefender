@@ -578,3 +578,233 @@ The core API is designed to remain stable while allowing for extensions:
 2. **Versioned APIs**: New features are added without breaking existing functionality
 3. **Deprecation warnings**: Old APIs are marked as deprecated before removal
 4. **Migration guides**: Clear migration paths for API changes
+
+## Enhanced External Server Integration
+
+### Overview
+
+The GWIZ Central Metrics Reporter includes comprehensive support for external server integration, making it easy to send analytics data to various databases and services including PostgreSQL, Firebase, and custom APIs.
+
+### Export Configuration
+
+```cpp
+USTRUCT(BlueprintType)
+struct FGWIZExportConfig
+{
+    GENERATED_BODY()
+    
+    // File export
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Export")
+    bool bEnableFileExport = true;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Export")
+    FString FileExportPath = TEXT("Saved/Analytics/");
+    
+    // HTTP/API export
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Export")
+    bool bEnableHTTPExport = false;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Export")
+    FString HTTPEndpoint = TEXT("https://your-metrics-server.com/api/analytics");
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Export")
+    TMap<FString, FString> HTTPHeaders;
+    
+    // Batch processing
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Export")
+    int32 BatchSize = 100;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Export")
+    float ExportInterval = 5.0f; // seconds
+    
+    // Retry logic
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Export")
+    int32 MaxRetries = 3;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Export")
+    float RetryDelay = 1.0f; // seconds
+    
+    // Offline caching
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Export")
+    bool bEnableOfflineCaching = true;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Export")
+    int32 MaxCachedEvents = 1000;
+};
+```
+
+### Server Integration Functions
+
+```cpp
+// Enhanced export functions
+UFUNCTION(BlueprintCallable, Category = "GWIZ Analytics")
+void ExportAnalyticsToHTTP(const FString& Endpoint, const TMap<FString, FString>& Headers);
+
+UFUNCTION(BlueprintCallable, Category = "GWIZ Analytics")
+void ExportAnalyticsToPostgreSQL(const FString& ConnectionString);
+
+UFUNCTION(BlueprintCallable, Category = "GWIZ Analytics")
+void ExportAnalyticsToFirebase(const FString& ProjectID, const FString& APIKey);
+
+UFUNCTION(BlueprintCallable, Category = "GWIZ Analytics")
+void ExportAnalyticsToCustomAPI(const FString& Endpoint, const FString& APIKey);
+
+// Batch export
+UFUNCTION(BlueprintCallable, Category = "GWIZ Analytics")
+void ExportBatchToServer(const TArray<FGWIZEventData>& Events, const FString& ServerType);
+
+// Configuration
+UFUNCTION(BlueprintCallable, Category = "GWIZ Analytics")
+void ConfigureExport(const FGWIZExportConfig& Config);
+
+UFUNCTION(BlueprintCallable, Category = "GWIZ Analytics")
+void EnableOfflineCaching(bool bEnable, int32 MaxCachedEvents = 1000);
+```
+
+### Server Integration Examples
+
+#### PostgreSQL Integration
+
+```cpp
+// PostgreSQL export configuration
+FGWIZExportConfig Config;
+Config.bEnableHTTPExport = true;
+Config.HTTPEndpoint = TEXT("https://your-api-server.com/analytics");
+Config.HTTPHeaders.Add(TEXT("Content-Type"), TEXT("application/json"));
+Config.HTTPHeaders.Add(TEXT("Authorization"), TEXT("Bearer your-api-key"));
+Config.BatchSize = 50;
+Config.ExportInterval = 10.0f;
+Config.bEnableOfflineCaching = true;
+Config.MaxCachedEvents = 500;
+
+// Usage
+UGWIZCentralMetricsReporter* Reporter = UGWIZCentralMetricsReporter::GetMetricsReporter();
+Reporter->ConfigureExport(Config);
+Reporter->ExportAnalyticsToPostgreSQL(TEXT("postgresql://user:pass@localhost:5432/game_analytics"));
+```
+
+#### Firebase Integration
+
+```cpp
+// Firebase export configuration
+FGWIZExportConfig Config;
+Config.bEnableHTTPExport = true;
+Config.HTTPEndpoint = TEXT("https://your-project.firebaseio.com/analytics.json");
+Config.HTTPHeaders.Add(TEXT("Content-Type"), TEXT("application/json"));
+Config.BatchSize = 100;
+Config.ExportInterval = 5.0f;
+Config.bEnableOfflineCaching = true;
+Config.MaxCachedEvents = 1000;
+
+// Usage
+UGWIZCentralMetricsReporter* Reporter = UGWIZCentralMetricsReporter::GetMetricsReporter();
+Reporter->ConfigureExport(Config);
+Reporter->ExportAnalyticsToFirebase(TEXT("your-project-id"), TEXT("your-api-key"));
+```
+
+#### Custom API Integration
+
+```cpp
+// Custom API export configuration
+FGWIZExportConfig Config;
+Config.bEnableHTTPExport = true;
+Config.HTTPEndpoint = TEXT("https://your-custom-api.com/analytics");
+Config.HTTPHeaders.Add(TEXT("Content-Type"), TEXT("application/json"));
+Config.HTTPHeaders.Add(TEXT("X-API-Key"), TEXT("your-api-key"));
+Config.BatchSize = 75;
+Config.ExportInterval = 15.0f;
+Config.bEnableOfflineCaching = true;
+Config.MaxCachedEvents = 750;
+
+// Usage
+UGWIZCentralMetricsReporter* Reporter = UGWIZCentralMetricsReporter::GetMetricsReporter();
+Reporter->ConfigureExport(Config);
+Reporter->ExportAnalyticsToCustomAPI(TEXT("https://your-custom-api.com/analytics"), TEXT("your-api-key"));
+```
+
+### Data Flow for External Integration
+
+```mermaid
+sequenceDiagram
+    participant Game as Game Systems
+    participant CMR as Central Reporter
+    participant Cache as Offline Cache
+    participant HTTP as HTTP Client
+    participant Server as External Server
+    
+    Game->>CMR: CollectEvent(EventData)
+    CMR->>Cache: Store event in cache
+    
+    loop Export Interval
+        CMR->>Cache: Get batch of events
+        CMR->>HTTP: Send batch to server
+        alt Success
+            HTTP->>Server: POST analytics data
+            Server->>HTTP: 200 OK
+            HTTP->>CMR: Success response
+            CMR->>Cache: Remove sent events
+        else Failure
+            HTTP->>CMR: Error response
+            CMR->>Cache: Keep events for retry
+        end
+    end
+```
+
+### Key Features
+
+#### Batch Processing
+- **Efficient communication**: Events are batched to reduce server load
+- **Configurable batch size**: Adjust based on server capacity and network conditions
+- **Configurable intervals**: Control how often data is sent to external servers
+
+#### Retry Logic
+- **Automatic retries**: Failed requests are automatically retried
+- **Configurable retry count**: Set maximum number of retry attempts
+- **Exponential backoff**: Retry delays increase with each failure
+
+#### Offline Caching
+- **Network resilience**: Data is cached when network is unavailable
+- **Configurable cache size**: Set maximum number of cached events
+- **Automatic recovery**: Cached data is sent when network is restored
+
+#### Connection Pooling
+- **Efficient connections**: Reuse HTTP connections for better performance
+- **Connection limits**: Prevent overwhelming external servers
+- **Health monitoring**: Monitor connection health and reconnect as needed
+
+### Supported Server Types
+
+#### PostgreSQL
+- **Direct database connection**: Connect directly to PostgreSQL database
+- **JSON data format**: Send analytics as JSON for easy processing
+- **Batch inserts**: Efficient bulk data insertion
+- **Connection pooling**: Reuse database connections
+
+#### Firebase
+- **Firebase Realtime Database**: Send data to Firebase Realtime Database
+- **Firebase Firestore**: Support for Firestore document storage
+- **Authentication**: Firebase authentication support
+- **Real-time updates**: Real-time data synchronization
+
+#### Custom APIs
+- **REST API support**: Send data to any REST API endpoint
+- **Custom headers**: Support for custom authentication and headers
+- **Flexible data format**: Send data in any required format
+- **Webhook support**: Support for webhook-based integrations
+
+### Performance Considerations
+
+#### Network Optimization
+- **Compression**: Compress data before sending to reduce bandwidth
+- **Connection reuse**: Reuse HTTP connections for better performance
+- **Batch processing**: Reduce network overhead with batched requests
+
+#### Memory Management
+- **Configurable cache size**: Prevent memory bloat with configurable limits
+- **Automatic cleanup**: Remove sent events from cache automatically
+- **Memory monitoring**: Monitor memory usage and adjust cache size
+
+#### Error Handling
+- **Graceful degradation**: Continue operation even when external servers are unavailable
+- **Error logging**: Log errors for debugging and monitoring
+- **Fallback options**: Provide fallback export options when primary fails

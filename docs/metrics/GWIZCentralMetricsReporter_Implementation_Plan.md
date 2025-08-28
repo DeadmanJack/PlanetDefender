@@ -6,254 +6,255 @@ This document provides a detailed implementation plan for the GWIZ Central Metri
 
 **Key Implementation Strategy**: Both the GWIZ Pooling System and GWIZ Central Metrics Reporter will be implemented as **separate plugins** to ensure clean separation, reusability, and professional distribution capabilities.
 
+**Story Point Strategy**: All tasks are broken down into **1-story-point tasks** for consistent estimation and tracking.
+
 ## Implementation Phases
 
-### Phase 1: Plugin Infrastructure Setup (Foundation)
+### Phase 1: Plugin Infrastructure Setup (Foundation) - 10 Story Points
 
-#### 1.1 Create Plugin Structure for Both Systems
-- **Files**: 
-  - `Plugins/GWIZPoolingSystem/GWIZPoolingSystem.uplugin`
-  - `Plugins/GWIZCentralMetricsReporter/GWIZCentralMetricsReporter.uplugin`
-- **Tasks**:
-  - Create plugin directory structure for both systems
-  - Define plugin dependencies and module relationships
-  - Set up build system integration
-  - Create plugin descriptor files with proper metadata
-  - Establish plugin versioning and distribution structure
+#### 1.1 Plugin Structure Creation (4 Story Points)
+- [ ] **Create GWIZPoolingSystem.uplugin descriptor file** (1 SP)
+- [ ] **Create GWIZCentralMetricsReporter.uplugin descriptor file** (1 SP)
+- [ ] **Create plugin directory structure for GWIZPoolingSystem** (1 SP)
+- [ ] **Create plugin directory structure for GWIZCentralMetricsReporter** (1 SP)
 
-#### 1.2 Create Core Data Structures and Enums
-- **Files**: 
-  - `Plugins/GWIZCentralMetricsReporter/Source/GWIZCentralMetricsReporter/Public/GWIZAnalyticsTypes.h`
-  - `Plugins/GWIZCentralMetricsReporter/Source/GWIZCentralMetricsReporter/Private/GWIZAnalyticsTypes.cpp`
-- **Tasks**:
-  - Define `FGWIZStaticSessionData` structure for session metadata
-  - Define `FGWIZEventData` structure for dynamic event data
-  - Define `FGWIZFlexibleData` structure for flexible data storage
-  - Create `EGWIZAnalyticsType` enum for analytics categorization
-  - Create `EGWIZExportFormat` enum for data export formats
-  - Add Blueprint property support and USTRUCT macros
-  - Implement utility functions (ToJSON, data manipulation, etc.)
+#### 1.2 Core Data Structures and Enums (6 Story Points)
+- [ ] **Define FGWIZStaticSessionData structure** (1 SP)
+- [ ] **Define FGWIZEventData structure** (1 SP)
+- [ ] **Define FGWIZFlexibleData structure** (1 SP)
+- [ ] **Create EGWIZAnalyticsType enum** (1 SP)
+- [ ] **Create EGWIZExportFormat enum** (1 SP)
+- [ ] **Implement FGWIZFlexibleData utility functions** (1 SP)
 
-#### 1.3 Create Performance Testing Structures
-- **Files**: 
-  - `Plugins/GWIZCentralMetricsReporter/Source/GWIZCentralMetricsReporter/Public/GWIZPerformanceTestTypes.h`
-- **Tasks**:
-  - Define `FGWIZPerformanceTestConfig` structure
-  - Define `FGWIZPerformanceTestResult` structure
-  - Add Blueprint property support for configuration
-  - Implement test result analysis and comparison functions
+### Phase 2: Session Management Implementation (7 Story Points)
 
-### Phase 2: Session Management Implementation
+#### 2.1 Session Manager Core (4 Story Points)
+- [ ] **Create UGWIZSessionManager header file** (1 SP)
+- [ ] **Implement UGWIZSessionManager singleton pattern** (1 SP)
+- [ ] **Implement session initialization and cleanup** (1 SP)
+- [ ] **Add session duration tracking** (1 SP)
 
-#### 2.1 Create UGWIZSessionManager Class
-- **Files**: 
-  - `Plugins/GWIZCentralMetricsReporter/Source/GWIZCentralMetricsReporter/Public/GWIZSessionManager.h`
-  - `Plugins/GWIZCentralMetricsReporter/Source/GWIZCentralMetricsReporter/Private/GWIZSessionManager.cpp`
-- **Tasks**:
-  - Implement singleton pattern with thread-safe access
-  - Add static session data management
-  - Implement session initialization and cleanup
-  - Add session duration tracking and updates
-  - Implement event creation with dynamic data population
-  - Add platform detection and metadata collection
+#### 2.2 Platform Integration (3 Story Points)
+- [ ] **Add platform detection (Steam, Epic, hardware info)** (1 SP)
+- [ ] **Create event creation with dynamic data population** (1 SP)
+- [ ] **Add session data validation and error handling** (1 SP)
 
-#### 2.2 Implement Platform Integration
-- **Tasks**:
-  - Add Steam platform detection and metadata collection
-  - Add Epic Games Store platform detection
-  - Implement hardware information collection
-  - Add build version and engine version detection
-  - Implement player identification and session tracking
-  - Add cross-platform compatibility handling
+### Phase 3: Central Analytics Reporter Implementation (7 Story Points)
 
-#### 2.3 Implement Session Data Management
-- **Tasks**:
-  - Implement static data initialization and validation
-  - Add session ID generation and management
-  - Implement session duration tracking
-  - Add session state persistence and recovery
-  - Implement session cleanup and resource management
-  - Add session data export and backup functionality
+#### 3.1 Reporter Core (4 Story Points)
+- [ ] **Create GWIZCentralMetricsReporter header file** (1 SP)
+- [ ] **Implement singleton pattern and thread safety** (1 SP)
+- [ ] **Add event storage with ring buffer** (1 SP)
+- [ ] **Implement CollectEvent() function** (1 SP)
 
-### Phase 3: Central Analytics Reporter Implementation
+#### 3.2 Analytics Processing (3 Story Points)
+- [ ] **Add real-time analytics processing** (1 SP)
+- [ ] **Implement historical data cleanup** (1 SP)
+- [ ] **Add analytics validation and error handling** (1 SP)
 
-#### 3.1 Create GWIZCentralMetricsReporter Class
-- **Files**: 
-  - `Plugins/GWIZCentralMetricsReporter/Source/GWIZCentralMetricsReporter/Public/GWIZCentralMetricsReporter.h`
-  - `Plugins/GWIZCentralMetricsReporter/Source/GWIZCentralMetricsReporter/Private/GWIZCentralMetricsReporter.cpp`
-- **Tasks**:
-  - Implement singleton pattern with thread-safe access
-  - Add event storage and management
-  - Implement real-time analytics processing
-  - Add historical data storage with ring buffer
-  - Implement automatic cleanup of old data
-  - Add analytics validation and error handling
+### Phase 4: Performance Testing System (7 Story Points)
 
-#### 3.2 Implement Event Collection and Processing
-- **Tasks**:
-  - Implement `CollectEvent()` function with thread safety
-  - Add real-time analytics processing
-  - Implement historical data storage with configurable limits
-  - Add automatic cleanup of old historical data
-  - Implement analytics validation and error handling
-  - Add performance optimization for high-frequency collection
+#### 4.1 Performance Test Structures (3 Story Points)
+- [ ] **Create FGWIZPerformanceTestConfig structure** (1 SP)
+- [ ] **Create FGWIZPerformanceTestResult structure** (1 SP)
+- [ ] **Implement PerformanceTest() function in reporter** (1 SP)
 
-#### 3.3 Implement Reporting Functions
-- **Tasks**:
-  - Implement `PrintAnalyticsReport()` with formatted output
-  - Add `ExportAnalyticsToFile()` with multiple format support
-  - Implement analytics filtering and sorting capabilities
-  - Add custom report formatting options
-  - Implement statistical analysis and trend detection
-  - Add real-time analytics dashboard data generation
+#### 4.2 Test Implementation (4 Story Points)
+- [ ] **Add actor spawning logic with/without pooling** (1 SP)
+- [ ] **Implement real-time performance monitoring** (1 SP)
+- [ ] **Add test result calculation and analysis** (1 SP)
+- [ ] **Integrate with pooling system plugin** (1 SP)
 
-### Phase 4: Performance Testing System
+### Phase 5: Data Export and Analytics (10 Story Points)
 
-#### 4.1 Implement PerformanceTest Function
-- **Tasks**:
-  - Create `PerformanceTest()` function in GWIZCentralMetricsReporter
-  - Add actor spawning logic with/without pooling
-  - Implement real-time performance monitoring during tests
-  - Add test result calculation and analysis
-  - Implement test cleanup and resource management
-  - Add progress tracking and status reporting
+#### 5.1 File Export (4 Story Points)
+- [ ] **Create JSON export functionality** (1 SP)
+- [ ] **Implement static session data export** (1 SP)
+- [ ] **Add dynamic event data export with session references** (1 SP)
+- [ ] **Create CSV export functionality** (1 SP)
 
-#### 4.2 Implement Performance Test Configuration
-- **Tasks**:
-  - Add support for configurable test parameters
-  - Implement multiple test runs with averaging
-  - Add memory, CPU, and GPU tracking options
-  - Implement garbage collection monitoring
-  - Add test result comparison and analysis
-  - Implement performance gain calculation
+#### 5.2 Data Processing (3 Story Points)
+- [ ] **Implement data flattening for complex structures** (1 SP)
+- [ ] **Add export validation and error handling** (1 SP)
+- [ ] **Create analytics processing engine** (1 SP)
 
-#### 4.3 Integrate with Pooling System Plugin
-- **Tasks**:
-  - Add direct integration with GWIZPoolingSystem plugin
-  - Implement pooling vs non-pooling comparison tests
-  - Add pooling system analytics collection
-  - Implement performance gain measurement
-  - Add pooling system statistics integration
-  - Create automated pooling performance tests
+#### 5.3 External Server Integration (3 Story Points)
+- [ ] **Create HTTP export functionality with retry logic** (1 SP)
+- [ ] **Implement batch processing for efficient server communication** (1 SP)
+- [ ] **Add connection pooling for database connections** (1 SP)
 
-### Phase 5: Data Export and Analytics
+### Phase 6: Enhanced Debug and Monitoring (7 Story Points)
 
-#### 5.1 Implement JSON Export System
-- **Files**: 
-  - `Plugins/GWIZCentralMetricsReporter/Source/GWIZCentralMetricsReporter/Public/GWIZAnalyticsExport.h`
-  - `Plugins/GWIZCentralMetricsReporter/Source/GWIZCentralMetricsReporter/Private/GWIZAnalyticsExport.cpp`
-- **Tasks**:
-  - Create JSON export functionality with referenced data approach
-  - Implement static session data export
-  - Add dynamic event data export with session references
-  - Implement data compression and optimization
-  - Add export validation and error handling
-  - Create export scheduling and automation
+#### 6.1 Debug Integration (4 Story Points)
+- [ ] **Replace PrintDebugInfo() with centralized reporter** (1 SP)
+- [ ] **Update PrintAllPoolStatistics() to use analytics system** (1 SP)
+- [ ] **Implement structured logging with severity levels** (1 SP)
+- [ ] **Add real-time analytics dashboard data** (1 SP)
 
-#### 5.2 Implement CSV Export System
-- **Tasks**:
-  - Create CSV export functionality for spreadsheet analysis
-  - Implement data flattening for complex nested structures
-  - Add CSV formatting and column management
-  - Implement large dataset handling and chunking
-  - Add CSV validation and error handling
-  - Create CSV template generation
+#### 6.2 Advanced Monitoring (3 Story Points)
+- [ ] **Create analytics anomaly detection** (1 SP)
+- [ ] **Implement analytics trend analysis** (1 SP)
+- [ ] **Add analytics alerting system** (1 SP)
 
-#### 5.3 Implement Analytics Processing
-- **Tasks**:
-  - Create real-time analytics processing engine
-  - Implement trend analysis and anomaly detection
-  - Add statistical analysis and reporting
-  - Implement data aggregation and summarization
-  - Add analytics dashboard data generation
-  - Create analytics alerting and notification system
+### Phase 7: Testing and Validation (7 Story Points)
 
-### Phase 6: Enhanced Debug and Monitoring
+#### 7.1 Unit Testing (4 Story Points)
+- [ ] **Create unit tests for analytics collection** (1 SP)
+- [ ] **Test performance test functionality** (1 SP)
+- [ ] **Validate data export functionality** (1 SP)
+- [ ] **Test thread safety** (1 SP)
 
-#### 6.1 Replace Existing Debug Output
-- **Tasks**:
-  - Migrate `PrintDebugInfo()` from GWIZObjectPool to centralized reporter
-  - Update `PrintAllPoolStatistics()` to use new analytics system
-  - Implement unified debug output with configurable verbosity
-  - Add structured logging with severity levels
-  - Create debug output filtering and formatting
-  - Implement debug output redirection
+#### 7.2 Integration Testing (3 Story Points)
+- [ ] **Validate session management** (1 SP)
+- [ ] **Create integration tests with pooling system** (1 SP)
+- [ ] **Create Blueprint tests for all functions** (1 SP)
 
-#### 6.2 Implement Real-time Monitoring
-- **Tasks**:
-  - Create real-time analytics dashboard data
-  - Implement live analytics streaming
-  - Add analytics anomaly detection
-  - Create analytics trend visualization data
-  - Implement custom monitoring dashboards
-  - Add real-time alerting system
+### Phase 8: Documentation and Examples (5 Story Points)
 
-#### 6.3 Implement Historical Analysis
-- **Tasks**:
-  - Create historical data storage and retrieval
-  - Implement analytics trend analysis
-  - Add analytics regression detection
-  - Create analytics optimization recommendations
-  - Implement data export for external analysis
-  - Add historical data visualization support
+#### 8.1 Usage Examples (3 Story Points)
+- [ ] **Create basic analytics collection examples** (1 SP)
+- [ ] **Add performance testing examples** (1 SP)
+- [ ] **Create game analytics examples** (1 SP)
 
-### Phase 7: Testing and Validation
+#### 8.2 API Documentation (2 Story Points)
+- [ ] **Document all public functions and classes** (1 SP)
+- [ ] **Create Blueprint node documentation** (1 SP)
 
-#### 7.1 Create Unit Tests
-- **Files**: 
-  - `Plugins/GWIZCentralMetricsReporter/Source/GWIZCentralMetricsReporterTests/Private/AnalyticsSystemTests.cpp`
-  - `Plugins/GWIZCentralMetricsReporter/Source/GWIZCentralMetricsReporterTests/Private/PerformanceTests.cpp`
-- **Tasks**:
-  - Test analytics collection and storage
-  - Validate performance test functionality
-  - Test data export functionality
-  - Validate thread safety
-  - Test error handling and recovery
-  - Validate session management
+## Enhanced External Server Integration
 
-#### 7.2 Create Integration Tests
-- **Tasks**:
-  - Test integration with pooling system plugin
-  - Validate real-time monitoring
-  - Test historical data analysis
-  - Validate data export functionality
-  - Test performance under load
-  - Validate memory management
+### Export Configuration Structure
 
-#### 7.3 Create Blueprint Tests
-- **Tasks**:
-  - Test all Blueprint-exposed functions
-  - Validate Blueprint configuration
-  - Test Blueprint event handling
-  - Validate Blueprint performance testing
-  - Test Blueprint reporting functions
-  - Validate Blueprint data export
+```cpp
+USTRUCT(BlueprintType)
+struct FGWIZExportConfig
+{
+    GENERATED_BODY()
+    
+    // File export
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Export")
+    bool bEnableFileExport = true;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Export")
+    FString FileExportPath = TEXT("Saved/Analytics/");
+    
+    // HTTP/API export
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Export")
+    bool bEnableHTTPExport = false;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Export")
+    FString HTTPEndpoint = TEXT("https://your-metrics-server.com/api/analytics");
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Export")
+    TMap<FString, FString> HTTPHeaders;
+    
+    // Batch processing
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Export")
+    int32 BatchSize = 100;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Export")
+    float ExportInterval = 5.0f; // seconds
+    
+    // Retry logic
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Export")
+    int32 MaxRetries = 3;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Export")
+    float RetryDelay = 1.0f; // seconds
+    
+    // Offline caching
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Export")
+    bool bEnableOfflineCaching = true;
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Export")
+    int32 MaxCachedEvents = 1000;
+};
+```
 
-### Phase 8: Documentation and Examples
+### Server Integration Functions
 
-#### 8.1 Create Usage Examples
-- **Files**: 
-  - `Plugins/GWIZCentralMetricsReporter/Documentation/Usage_Examples.md`
-  - `Plugins/GWIZCentralMetricsReporter/Documentation/Performance_Testing_Guide.md`
-- **Tasks**:
-  - Create basic analytics collection examples
-  - Add performance testing examples
-  - Create game analytics examples
-  - Add Blueprint implementation examples
-  - Create troubleshooting guides
-  - Add best practices documentation
+```cpp
+// Enhanced export functions
+UFUNCTION(BlueprintCallable, Category = "GWIZ Analytics")
+void ExportAnalyticsToHTTP(const FString& Endpoint, const TMap<FString, FString>& Headers);
 
-#### 8.2 Create API Documentation
-- **Files**: 
-  - `Plugins/GWIZCentralMetricsReporter/Documentation/API_Reference.md`
-  - `Plugins/GWIZCentralMetricsReporter/Documentation/Plugin_Integration.md`
-- **Tasks**:
-  - Document all public functions and classes
-  - Add parameter descriptions and examples
-  - Create Blueprint node documentation
-  - Document plugin integration procedures
-  - Add performance considerations
-  - Create migration guides
+UFUNCTION(BlueprintCallable, Category = "GWIZ Analytics")
+void ExportAnalyticsToPostgreSQL(const FString& ConnectionString);
+
+UFUNCTION(BlueprintCallable, Category = "GWIZ Analytics")
+void ExportAnalyticsToFirebase(const FString& ProjectID, const FString& APIKey);
+
+UFUNCTION(BlueprintCallable, Category = "GWIZ Analytics")
+void ExportAnalyticsToCustomAPI(const FString& Endpoint, const FString& APIKey);
+
+// Batch export
+UFUNCTION(BlueprintCallable, Category = "GWIZ Analytics")
+void ExportBatchToServer(const TArray<FGWIZEventData>& Events, const FString& ServerType);
+
+// Configuration
+UFUNCTION(BlueprintCallable, Category = "GWIZ Analytics")
+void ConfigureExport(const FGWIZExportConfig& Config);
+
+UFUNCTION(BlueprintCallable, Category = "GWIZ Analytics")
+void EnableOfflineCaching(bool bEnable, int32 MaxCachedEvents = 1000);
+```
+
+### Server Integration Examples
+
+#### PostgreSQL Integration
+```cpp
+// PostgreSQL export configuration
+FGWIZExportConfig Config;
+Config.bEnableHTTPExport = true;
+Config.HTTPEndpoint = TEXT("https://your-api-server.com/analytics");
+Config.HTTPHeaders.Add(TEXT("Content-Type"), TEXT("application/json"));
+Config.HTTPHeaders.Add(TEXT("Authorization"), TEXT("Bearer your-api-key"));
+Config.BatchSize = 50;
+Config.ExportInterval = 10.0f;
+Config.bEnableOfflineCaching = true;
+Config.MaxCachedEvents = 500;
+
+// Usage
+UGWIZCentralMetricsReporter* Reporter = UGWIZCentralMetricsReporter::GetMetricsReporter();
+Reporter->ConfigureExport(Config);
+Reporter->ExportAnalyticsToPostgreSQL(TEXT("postgresql://user:pass@localhost:5432/game_analytics"));
+```
+
+#### Firebase Integration
+```cpp
+// Firebase export configuration
+FGWIZExportConfig Config;
+Config.bEnableHTTPExport = true;
+Config.HTTPEndpoint = TEXT("https://your-project.firebaseio.com/analytics.json");
+Config.HTTPHeaders.Add(TEXT("Content-Type"), TEXT("application/json"));
+Config.BatchSize = 100;
+Config.ExportInterval = 5.0f;
+Config.bEnableOfflineCaching = true;
+Config.MaxCachedEvents = 1000;
+
+// Usage
+UGWIZCentralMetricsReporter* Reporter = UGWIZCentralMetricsReporter::GetMetricsReporter();
+Reporter->ConfigureExport(Config);
+Reporter->ExportAnalyticsToFirebase(TEXT("your-project-id"), TEXT("your-api-key"));
+```
+
+#### Custom API Integration
+```cpp
+// Custom API export configuration
+FGWIZExportConfig Config;
+Config.bEnableHTTPExport = true;
+Config.HTTPEndpoint = TEXT("https://your-custom-api.com/analytics");
+Config.HTTPHeaders.Add(TEXT("Content-Type"), TEXT("application/json"));
+Config.HTTPHeaders.Add(TEXT("X-API-Key"), TEXT("your-api-key"));
+Config.BatchSize = 75;
+Config.ExportInterval = 15.0f;
+Config.bEnableOfflineCaching = true;
+Config.MaxCachedEvents = 750;
+
+// Usage
+UGWIZCentralMetricsReporter* Reporter = UGWIZCentralMetricsReporter::GetMetricsReporter();
+Reporter->ConfigureExport(Config);
+Reporter->ExportAnalyticsToCustomAPI(TEXT("https://your-custom-api.com/analytics"), TEXT("your-api-key"));
+```
 
 ## Plugin File Structure
 
@@ -324,39 +325,34 @@ Plugins/
 
 ## Implementation Timeline
 
-### Week 1: Plugin Infrastructure
-- [ ] Phase 1.1: Create Plugin Structure for Both Systems
-- [ ] Phase 1.2: Create Core Data Structures and Enums
-- [ ] Phase 1.3: Create Performance Testing Structures
+### Week 1: Plugin Infrastructure (10 Story Points)
+- [ ] Phase 1.1: Plugin Structure Creation (4 SP)
+- [ ] Phase 1.2: Core Data Structures and Enums (6 SP)
 
-### Week 2: Session Management
-- [ ] Phase 2.1: Create UGWIZSessionManager Class
-- [ ] Phase 2.2: Implement Platform Integration
-- [ ] Phase 2.3: Implement Session Data Management
+### Week 2: Session Management (7 Story Points)
+- [ ] Phase 2.1: Session Manager Core (4 SP)
+- [ ] Phase 2.2: Platform Integration (3 SP)
 
-### Week 3: Central Analytics Reporter
-- [ ] Phase 3.1: Create GWIZCentralMetricsReporter Class
-- [ ] Phase 3.2: Implement Event Collection and Processing
-- [ ] Phase 3.3: Implement Reporting Functions
+### Week 3: Central Analytics Reporter (7 Story Points)
+- [ ] Phase 3.1: Reporter Core (4 SP)
+- [ ] Phase 3.2: Analytics Processing (3 SP)
 
-### Week 4: Performance Testing
-- [ ] Phase 4.1: Implement PerformanceTest Function
-- [ ] Phase 4.2: Implement Performance Test Configuration
-- [ ] Phase 4.3: Integrate with Pooling System Plugin
+### Week 4: Performance Testing (7 Story Points)
+- [ ] Phase 4.1: Performance Test Structures (3 SP)
+- [ ] Phase 4.2: Test Implementation (4 SP)
 
-### Week 5: Data Export and Analytics
-- [ ] Phase 5.1: Implement JSON Export System
-- [ ] Phase 5.2: Implement CSV Export System
-- [ ] Phase 5.3: Implement Analytics Processing
+### Week 5: Data Export and Analytics (10 Story Points)
+- [ ] Phase 5.1: File Export (4 SP)
+- [ ] Phase 5.2: Data Processing (3 SP)
+- [ ] Phase 5.3: External Server Integration (3 SP)
 
-### Week 6: Enhanced Features
-- [ ] Phase 6.1: Replace Existing Debug Output
-- [ ] Phase 6.2: Implement Real-time Monitoring
-- [ ] Phase 6.3: Implement Historical Analysis
+### Week 6: Enhanced Features (7 Story Points)
+- [ ] Phase 6.1: Debug Integration (4 SP)
+- [ ] Phase 6.2: Advanced Monitoring (3 SP)
 
-### Week 7: Testing and Documentation
-- [ ] Phase 7: Testing and Validation
-- [ ] Phase 8: Documentation and Examples
+### Week 7: Testing and Documentation (12 Story Points)
+- [ ] Phase 7: Testing and Validation (7 SP)
+- [ ] Phase 8: Documentation and Examples (5 SP)
 
 ## Testing Strategy
 

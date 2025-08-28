@@ -299,3 +299,61 @@ Reporter->CollectEvent(MonetizationEvent);
 EventID,EventType,Timestamp,SystemName,SessionID,SessionDuration,LevelName,GameMode,GameTime,Action,AbilityName,AbilityDamage
 1705123456-Windows-DEF456,Gameplay,1705123456.789,CombatSystem,SESSION-1705123456-ABC123,1250.5,Level_01,SinglePlayer,1250.5,AbilityUsed,Fireball,150.0
 ```
+
+## External Server Integration
+
+### PostgreSQL Integration
+```cpp
+// Configure export to PostgreSQL
+FGWIZExportConfig Config;
+Config.bEnableHTTPExport = true;
+Config.HTTPEndpoint = TEXT("https://your-api-server.com/analytics");
+Config.HTTPHeaders.Add(TEXT("Content-Type"), TEXT("application/json"));
+Config.HTTPHeaders.Add(TEXT("Authorization"), TEXT("Bearer your-api-key"));
+Config.BatchSize = 50;
+Config.ExportInterval = 10.0f;
+Config.bEnableOfflineCaching = true;
+Config.MaxCachedEvents = 500;
+
+// Enable PostgreSQL export
+UGWIZCentralMetricsReporter* Reporter = UGWIZCentralMetricsReporter::GetMetricsReporter();
+Reporter->ConfigureExport(Config);
+Reporter->ExportAnalyticsToPostgreSQL(TEXT("postgresql://user:pass@localhost:5432/game_analytics"));
+```
+
+### Firebase Integration
+```cpp
+// Configure export to Firebase
+FGWIZExportConfig Config;
+Config.bEnableHTTPExport = true;
+Config.HTTPEndpoint = TEXT("https://your-project.firebaseio.com/analytics.json");
+Config.HTTPHeaders.Add(TEXT("Content-Type"), TEXT("application/json"));
+Config.BatchSize = 100;
+Config.ExportInterval = 5.0f;
+Config.bEnableOfflineCaching = true;
+Config.MaxCachedEvents = 1000;
+
+// Enable Firebase export
+UGWIZCentralMetricsReporter* Reporter = UGWIZCentralMetricsReporter::GetMetricsReporter();
+Reporter->ConfigureExport(Config);
+Reporter->ExportAnalyticsToFirebase(TEXT("your-project-id"), TEXT("your-api-key"));
+```
+
+### Custom API Integration
+```cpp
+// Configure export to custom API
+FGWIZExportConfig Config;
+Config.bEnableHTTPExport = true;
+Config.HTTPEndpoint = TEXT("https://your-custom-api.com/analytics");
+Config.HTTPHeaders.Add(TEXT("Content-Type"), TEXT("application/json"));
+Config.HTTPHeaders.Add(TEXT("X-API-Key"), TEXT("your-api-key"));
+Config.BatchSize = 75;
+Config.ExportInterval = 15.0f;
+Config.bEnableOfflineCaching = true;
+Config.MaxCachedEvents = 750;
+
+// Enable custom API export
+UGWIZCentralMetricsReporter* Reporter = UGWIZCentralMetricsReporter::GetMetricsReporter();
+Reporter->ConfigureExport(Config);
+Reporter->ExportAnalyticsToCustomAPI(TEXT("https://your-custom-api.com/analytics"), TEXT("your-api-key"));
+```
