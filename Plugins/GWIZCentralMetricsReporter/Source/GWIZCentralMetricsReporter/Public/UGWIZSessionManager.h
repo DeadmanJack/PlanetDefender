@@ -17,7 +17,7 @@ class GWIZCENTRALMETRICSREPORTER_API UGWIZSessionManager : public UObject
 
 public:
 	// Singleton access
-	UFUNCTION(BlueprintCallable, Category = "Analytics", CallInEditor = true)
+	UFUNCTION(BlueprintCallable, Category = "Analytics")
 	static UGWIZSessionManager* GetSessionManager();
 
 	// Session management

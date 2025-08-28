@@ -8,7 +8,7 @@
 #include "UGWIZCentralMetricsReporter.generated.h"
 
 // Forward declarations
-class FTimerHandle;
+struct FTimerHandle;
 
 /**
  * Central analytics reporter for comprehensive game analytics
@@ -22,7 +22,7 @@ class GWIZCENTRALMETRICSREPORTER_API UGWIZCentralMetricsReporter : public UObjec
 
 public:
 	// Singleton access
-	UFUNCTION(BlueprintCallable, Category = "Analytics", CallInEditor = true)
+	UFUNCTION(BlueprintCallable, Category = "Analytics")
 	static UGWIZCentralMetricsReporter* GetMetricsReporter();
 
 	// Initialization
@@ -95,10 +95,10 @@ protected:
 
 	// Timers
 	UPROPERTY()
-	FTimerHandle* ExportTimerHandle;
+	FTimerHandle ExportTimerHandle;
 
 	UPROPERTY()
-	FTimerHandle* ProcessingTimerHandle;
+	FTimerHandle ProcessingTimerHandle;
 
 	// State
 	UPROPERTY(BlueprintReadOnly, Category = "Analytics")
@@ -112,7 +112,7 @@ private:
 	static UGWIZCentralMetricsReporter* Instance;
 
 	// Internal processing
-	void ProcessEvent(const FGWIZEventData& Event);
+	void ProcessAnalyticsEvent(const FGWIZEventData& Event);
 	void ExportEvents();
 	void ProcessBatchExport();
 	void HandleExportFailure(const FString& ErrorMessage);

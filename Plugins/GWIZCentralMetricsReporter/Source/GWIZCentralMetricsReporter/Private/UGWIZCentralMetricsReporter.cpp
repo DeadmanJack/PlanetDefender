@@ -6,8 +6,8 @@
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "Misc/DateTime.h"
-#include "Json/Public/Json.h"
-#include "Json/Public/JsonUtilities.h"
+#include "Dom/JsonObject.h"
+#include "Serialization/JsonSerializer.h"
 
 // Static instance
 UGWIZCentralMetricsReporter* UGWIZCentralMetricsReporter::Instance = nullptr;
@@ -79,14 +79,8 @@ void UGWIZCentralMetricsReporter::Shutdown()
 	// Stop timers
 	if (UWorld* World = GetWorld())
 	{
-		if (ExportTimerHandle)
-		{
-			World->GetTimerManager().ClearTimer(*ExportTimerHandle);
-		}
-		if (ProcessingTimerHandle)
-		{
-			World->GetTimerManager().ClearTimer(*ProcessingTimerHandle);
-		}
+		World->GetTimerManager().ClearTimer(ExportTimerHandle);
+		World->GetTimerManager().ClearTimer(ProcessingTimerHandle);
 	}
 	
 	// Export any remaining events
@@ -115,7 +109,7 @@ void UGWIZCentralMetricsReporter::CollectEvent(const FGWIZEventData& Event)
 	const double StartTime = FPlatformTime::Seconds();
 	
 	// Process the event
-	ProcessEvent(Event);
+	ProcessAnalyticsEvent(Event);
 	
 	// Update performance statistics
 	const double EndTime = FPlatformTime::Seconds();
@@ -168,10 +162,23 @@ void UGWIZCentralMetricsReporter::EndPerformanceTest(const FString& TestName, co
 		
 		// Create performance event
 		FGWIZEventData PerformanceEvent = UGWIZSessionManager::GetSessionManager()->CreateEvent("Performance", "PerformanceTest");
-		PerformanceEvent.Data.SetString("TestName", TestName);
-		PerformanceEvent.Data.SetString("SystemName", SystemName);
-		PerformanceEvent.Data.SetFloat("Duration", Duration);
-		PerformanceEvent.Data.SetString("Status", "Completed");
+		
+		// Create nested data for performance metrics
+		FGWIZSimpleData TestNameData;
+		TestNameData.SetString(TestName);
+		PerformanceEvent.Data.SetNestedValue("TestName", TestNameData);
+		
+		FGWIZSimpleData SystemNameData;
+		SystemNameData.SetString(SystemName);
+		PerformanceEvent.Data.SetNestedValue("SystemName", SystemNameData);
+		
+		FGWIZSimpleData DurationData;
+		DurationData.SetFloat(Duration);
+		PerformanceEvent.Data.SetNestedValue("Duration", DurationData);
+		
+		FGWIZSimpleData StatusData;
+		StatusData.SetString("Completed");
+		PerformanceEvent.Data.SetNestedValue("Status", StatusData);
 		
 		CollectEvent(PerformanceEvent);
 		
@@ -190,22 +197,22 @@ void UGWIZCentralMetricsReporter::UpdateExportConfig(const FGWIZExportConfig& Ne
 	ExportConfig = NewConfig;
 	
 	// Update timer if export interval changed
-	if (bInitialized && UWorld* World = GetWorld())
+	if (bInitialized)
 	{
-		if (ExportTimerHandle)
+		if (UWorld* World = GetWorld())
 		{
-			World->GetTimerManager().ClearTimer(*ExportTimerHandle);
-		}
-		
-		if (ExportConfig.ExportInterval > 0.0f)
-		{
-			World->GetTimerManager().SetTimer(
-				ExportTimerHandle,
-				this,
-				&UGWIZCentralMetricsReporter::OnExportTimer,
-				ExportConfig.ExportInterval,
-				true
-			);
+			World->GetTimerManager().ClearTimer(ExportTimerHandle);
+			
+			if (ExportConfig.ExportInterval > 0.0f)
+			{
+				World->GetTimerManager().SetTimer(
+					ExportTimerHandle,
+					this,
+					&UGWIZCentralMetricsReporter::OnExportTimer,
+					ExportConfig.ExportInterval,
+					true
+				);
+			}
 		}
 	}
 	
@@ -238,7 +245,7 @@ void UGWIZCentralMetricsReporter::ClearCache()
 	UE_LOG(LogTemp, Log, TEXT("Cache cleared. Removed %d events"), CachedCount);
 }
 
-void UGWIZCentralMetricsReporter::ProcessEvent(const FGWIZEventData& Event)
+void UGWIZCentralMetricsReporter::ProcessAnalyticsEvent(const FGWIZEventData& Event)
 {
 	// Add event to cache
 	CachedEvents.Add(Event);

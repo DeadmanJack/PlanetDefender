@@ -2,6 +2,8 @@
 #include "Engine/Engine.h"
 #include "HAL/PlatformProperties.h"
 #include "HAL/PlatformMisc.h"
+#include "HAL/PlatformMemory.h"
+#include "Kismet/GameplayStatics.h"
 #include "Misc/App.h"
 #include "Misc/EngineVersion.h"
 
@@ -104,8 +106,8 @@ FTimespan UGWIZSessionManager::GetSessionDuration() const
 
 void UGWIZSessionManager::DetectPlatformInfo()
 {
-	// Platform detection
-	StaticSessionData.Platform = FPlatformProperties::GetPlatformInfo().IniPlatformName;
+	// Platform detection - use working UE5 approach
+	StaticSessionData.Platform = UGameplayStatics::GetPlatformName();
 	
 	// Distribution platform detection (simplified)
 	StaticSessionData.DistributionPlatform = TEXT("Unknown");
@@ -130,8 +132,9 @@ void UGWIZSessionManager::DetectHardwareInfo()
 	// GPU information (simplified)
 	StaticSessionData.GPUInfo = FPlatformMisc::GetPrimaryGPUBrand();
 	
-	// System memory
-	StaticSessionData.SystemMemoryMB = FPlatformMisc::GetTotalPhysicalGB() * 1024;
+	// System memory - use working UE5 approach
+	FPlatformMemoryStats MemoryStats = FPlatformMemory::GetStats();
+	StaticSessionData.SystemMemoryMB = MemoryStats.AvailablePhysical / (1024 * 1024); // Convert bytes to MB
 }
 
 void UGWIZSessionManager::DetectEngineInfo()

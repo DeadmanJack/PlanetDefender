@@ -4,36 +4,36 @@
 #include "Engine/Engine.h"
 #include "GWIZAnalyticsTypes.generated.h"
 
+// Data type enumeration for flexible data
+UENUM(BlueprintType)
+enum class EGWIZDataType : uint8
+{
+	None,
+	String,
+	Float,
+	Int,
+	Int64,
+	Bool,
+	Array,
+	Nested
+};
+
 /**
- * Flexible data structure for storing various types of analytics data
- * Similar to JSON structure but optimized for Unreal Engine
+ * Simple data structure for basic analytics data
+ * Can be used directly in UPROPERTY without recursion issues
  */
 USTRUCT(BlueprintType)
-struct FGWIZFlexibleData
+struct FGWIZSimpleData
 {
 	GENERATED_BODY()
 
 public:
-	// Data type enumeration
-	UENUM(BlueprintType)
-	enum class EDataType : uint8
-	{
-		None,
-		String,
-		Float,
-		Int,
-		Int64,
-		Bool,
-		Array,
-		Nested
-	};
-
 	// Constructor
-	FGWIZFlexibleData() : DataType(EDataType::None) {}
+	FGWIZSimpleData() : DataType(EGWIZDataType::None) {}
 
 	// Data storage
 	UPROPERTY(BlueprintReadWrite, Category = "Analytics")
-	EDataType DataType;
+	EGWIZDataType DataType;
 
 	// String data
 	UPROPERTY(BlueprintReadWrite, Category = "Analytics")
@@ -53,55 +53,35 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Analytics")
 	bool BoolValue;
 
-	// Array data
-	UPROPERTY(BlueprintReadWrite, Category = "Analytics")
-	TArray<FGWIZFlexibleData> ArrayValue;
-
-	// Nested data
-	UPROPERTY(BlueprintReadWrite, Category = "Analytics")
-	TMap<FString, FGWIZFlexibleData> NestedValue;
-
 	// Setter methods
 	void SetString(const FString& Value)
 	{
-		DataType = EDataType::String;
+		DataType = EGWIZDataType::String;
 		StringValue = Value;
 	}
 
 	void SetFloat(float Value)
 	{
-		DataType = EDataType::Float;
+		DataType = EGWIZDataType::Float;
 		FloatValue = Value;
 	}
 
 	void SetInt(int32 Value)
 	{
-		DataType = EDataType::Int;
+		DataType = EGWIZDataType::Int;
 		IntValue = Value;
 	}
 
 	void SetInt64(int64 Value)
 	{
-		DataType = EDataType::Int64;
+		DataType = EGWIZDataType::Int64;
 		Int64Value = Value;
 	}
 
 	void SetBool(bool Value)
 	{
-		DataType = EDataType::Bool;
+		DataType = EGWIZDataType::Bool;
 		BoolValue = Value;
-	}
-
-	void SetArray(const TArray<FGWIZFlexibleData>& Value)
-	{
-		DataType = EDataType::Array;
-		ArrayValue = Value;
-	}
-
-	void SetNested(const TMap<FString, FGWIZFlexibleData>& Value)
-	{
-		DataType = EDataType::Nested;
-		NestedValue = Value;
 	}
 
 	// Getter methods
@@ -110,28 +90,178 @@ public:
 	int32 GetInt() const { return IntValue; }
 	int64 GetInt64() const { return Int64Value; }
 	bool GetBool() const { return BoolValue; }
-	TArray<FGWIZFlexibleData> GetArray() const { return ArrayValue; }
-	TMap<FString, FGWIZFlexibleData> GetNested() const { return NestedValue; }
+};
+
+/**
+ * Complex data structure for arrays and nested objects
+ * Not used in UPROPERTY to avoid recursion, but provides full functionality
+ */
+struct FGWIZComplexData
+{
+public:
+	// Array data
+	TArray<FGWIZSimpleData> ArrayValue;
+	
+	// Nested data
+	TMap<FString, FGWIZSimpleData> NestedValue;
+
+	// Setter methods
+	void SetArray(const TArray<FGWIZSimpleData>& Value)
+	{
+		ArrayValue = Value;
+	}
+
+	void SetNested(const TMap<FString, FGWIZSimpleData>& Value)
+	{
+		NestedValue = Value;
+	}
+
+	// Getter methods
+	TArray<FGWIZSimpleData> GetArray() const { return ArrayValue; }
+	TMap<FString, FGWIZSimpleData> GetNested() const { return NestedValue; }
 
 	// Helper method to set nested data by key
-	void SetNestedValue(const FString& Key, const FGWIZFlexibleData& Value)
+	void SetNestedValue(const FString& Key, const FGWIZSimpleData& Value)
 	{
-		if (DataType != EDataType::Nested)
-		{
-			DataType = EDataType::Nested;
-			NestedValue.Empty();
-		}
 		NestedValue.Add(Key, Value);
 	}
 
 	// Helper method to get nested data by key
-	FGWIZFlexibleData GetNestedValue(const FString& Key) const
+	FGWIZSimpleData GetNestedValue(const FString& Key) const
 	{
-		if (DataType == EDataType::Nested && NestedValue.Contains(Key))
+		if (NestedValue.Contains(Key))
 		{
 			return NestedValue[Key];
 		}
-		return FGWIZFlexibleData();
+		return FGWIZSimpleData();
+	}
+
+	// Array manipulation
+	void AddArrayElement(const FGWIZSimpleData& Element)
+	{
+		ArrayValue.Add(Element);
+	}
+
+	FGWIZSimpleData GetArrayElement(int32 Index) const
+	{
+		if (ArrayValue.IsValidIndex(Index))
+		{
+			return ArrayValue[Index];
+		}
+		return FGWIZSimpleData();
+	}
+
+	int32 GetArraySize() const
+	{
+		return ArrayValue.Num();
+	}
+};
+
+/**
+ * Flexible data structure that combines simple and complex data
+ * Uses simple data for UPROPERTY compatibility, complex data for advanced features
+ */
+USTRUCT(BlueprintType)
+struct FGWIZFlexibleData
+{
+	GENERATED_BODY()
+
+public:
+	// Constructor
+	FGWIZFlexibleData() : DataType(EGWIZDataType::None) {}
+
+	// Data storage
+	UPROPERTY(BlueprintReadWrite, Category = "Analytics")
+	EGWIZDataType DataType;
+
+	// Simple data (for UPROPERTY compatibility)
+	UPROPERTY(BlueprintReadWrite, Category = "Analytics")
+	FGWIZSimpleData SimpleData;
+
+	// Complex data (not exposed to Blueprint, but available in C++)
+	FGWIZComplexData ComplexData;
+
+	// Setter methods for simple data
+	void SetString(const FString& Value)
+	{
+		DataType = EGWIZDataType::String;
+		SimpleData.SetString(Value);
+	}
+
+	void SetFloat(float Value)
+	{
+		DataType = EGWIZDataType::Float;
+		SimpleData.SetFloat(Value);
+	}
+
+	void SetInt(int32 Value)
+	{
+		DataType = EGWIZDataType::Int;
+		SimpleData.SetInt(Value);
+	}
+
+	void SetInt64(int64 Value)
+	{
+		DataType = EGWIZDataType::Int64;
+		SimpleData.SetInt64(Value);
+	}
+
+	void SetBool(bool Value)
+	{
+		DataType = EGWIZDataType::Bool;
+		SimpleData.SetBool(Value);
+	}
+
+	// Setter methods for complex data
+	void SetArray(const TArray<FGWIZSimpleData>& Value)
+	{
+		DataType = EGWIZDataType::Array;
+		ComplexData.SetArray(Value);
+	}
+
+	void SetNested(const TMap<FString, FGWIZSimpleData>& Value)
+	{
+		DataType = EGWIZDataType::Nested;
+		ComplexData.SetNested(Value);
+	}
+
+	// Getter methods for simple data
+	FString GetString() const { return SimpleData.GetString(); }
+	float GetFloat() const { return SimpleData.GetFloat(); }
+	int32 GetInt() const { return SimpleData.GetInt(); }
+	int64 GetInt64() const { return SimpleData.GetInt64(); }
+	bool GetBool() const { return SimpleData.GetBool(); }
+
+	// Getter methods for complex data
+	TArray<FGWIZSimpleData> GetArray() const { return ComplexData.GetArray(); }
+	TMap<FString, FGWIZSimpleData> GetNested() const { return ComplexData.GetNested(); }
+
+	// Helper methods for complex data
+	void SetNestedValue(const FString& Key, const FGWIZSimpleData& Value)
+	{
+		DataType = EGWIZDataType::Nested;
+		ComplexData.SetNestedValue(Key, Value);
+	}
+
+	FGWIZSimpleData GetNestedValue(const FString& Key) const
+	{
+		return ComplexData.GetNestedValue(Key);
+	}
+
+	void AddArrayElement(const FGWIZSimpleData& Element)
+	{
+		DataType = EGWIZDataType::Array;
+		ComplexData.AddArrayElement(Element);
+	}
+
+	FGWIZSimpleData GetArrayElement(int32 Index) const
+	{
+		return ComplexData.GetArrayElement(Index);
+	}
+
+	int32 GetArraySize() const
+	{
+		return ComplexData.GetArraySize();
 	}
 };
 
