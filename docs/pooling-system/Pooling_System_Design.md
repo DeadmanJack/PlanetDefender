@@ -332,3 +332,66 @@ private:
 - Efficient object state management
 - Batch operations for bulk pool management
 - Performance metrics collection and analysis
+
+## Integration with Centralized Metrics System
+
+### GWIZCentralMetricsReporter Integration
+The pooling system integrates with the centralized metrics system to provide comprehensive monitoring and reporting capabilities.
+
+#### Metrics Collection
+- **Pool Statistics**: All pool statistics are collected as unified metrics
+- **Performance Data**: Real-time performance data from pool operations
+- **Memory Usage**: Detailed memory usage tracking and analysis
+- **Custom Metrics**: Support for custom pooling-specific metrics
+
+#### Performance Testing
+- **Automated Testing**: Performance tests with pooling vs non-pooling comparison
+- **Benchmarking**: Automated benchmarking of pool performance
+- **Regression Testing**: Performance regression detection and reporting
+- **Load Testing**: Stress testing with high object counts
+
+#### Debug Output Replacement
+- **Centralized Debug**: `PrintDebugInfo()` and `PrintAllPoolStatistics()` use centralized reporter
+- **Structured Logging**: Enhanced logging with severity levels and categories
+- **Real-time Monitoring**: Live pooling system metrics in centralized dashboard
+- **Historical Analysis**: Long-term performance trend analysis
+
+#### External System Integration
+- **ELK Stack**: Pooling metrics exported to Elasticsearch for analysis
+- **Grafana**: Real-time pooling dashboards and alerting
+- **Custom Dashboards**: Custom monitoring dashboards for pooling metrics
+- **Data Export**: Comprehensive data export for external analysis
+
+### Enhanced Pooling Manager
+The `AGWIZPoolingManager` is enhanced with performance testing capabilities:
+
+```cpp
+// Performance testing function
+UFUNCTION(BlueprintCallable, Category = "Pooling")
+void PerformanceTest(TSubclassOf<AActor> ActorClass, int32 SpawnCount, 
+                    float Lifetime, bool bUsePooling, 
+                    const FGWIZPerformanceTestConfig& Config);
+```
+
+### Metrics Integration
+Pooling statistics are automatically integrated into the centralized metrics system:
+
+```cpp
+// Automatic metrics collection
+void AGWIZPoolingManager::CollectPoolingMetrics()
+{
+    FGWIZUnifiedMetrics Metrics;
+    Metrics.SystemName = TEXT("PoolingSystem");
+    Metrics.MetricType = EGWIZMetricType::Performance;
+    Metrics.Value = GetTotalObjects();
+    Metrics.MemoryUsage = GetTotalMemoryUsage();
+    Metrics.CPUUsage = CalculateCPUUsage();
+    
+    // Add custom pooling data
+    Metrics.AddCustomData(TEXT("PoolCount"), FString::FromInt(GetPoolCount()));
+    Metrics.AddCustomData(TEXT("HitRate"), FString::SanitizeFloat(GetGlobalHitRate()));
+    
+    // Send to centralized reporter
+    UGWIZCentralMetricsReporter::GetMetricsReporter()->CollectMetrics(TEXT("PoolingSystem"), Metrics);
+}
+```

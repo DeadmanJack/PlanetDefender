@@ -329,110 +329,35 @@ This document lists all outstanding tasks for completing the GWIZ Pooling System
 
 ---
 
-## Phase 10: Performance Testing and Centralized Reporting System (High Priority)
+## Phase 10: Performance Testing and Centralized Metrics System (High Priority)
 
 ### 10.1 Performance Test Framework
 - [ ] **Implement PerformanceTest function** (Line 800)
-  - Create PerformanceTest() function in GWIZPoolingManager with actor class parameter
-  - Add spawn count, lifetime, and pooling flag parameters
-  - Implement performance measurement with timing and memory tracking
-  - Add comparison mode (pooling vs non-pooling) for performance gains demonstration
-  - Support configurable test scenarios and stress testing
+  - Create PerformanceTest() function in GWIZPoolingManager
+  - Add actor class, spawn count, lifetime, and pooling flag parameters
+  - Implement performance measurement and comparison mode
 
-- [ ] **Implement performance test configuration** (Line 805)
-  - Create FGWIZPerformanceTestConfig struct for test parameters
-  - Add test duration, spawn intervals, and measurement frequency
-  - Implement test result aggregation and statistical analysis
-  - Add support for multiple test runs with averaging
-  - Include memory usage tracking and garbage collection monitoring
-
-- [ ] **Implement performance test execution** (Line 810)
-  - Create test execution engine with real-time monitoring
-  - Add progress tracking and test status reporting
-  - Implement automatic test cleanup and resource management
-  - Add test interruption and pause/resume functionality
-  - Support concurrent test execution for stress testing
-
-### 10.2 Centralized Performance Reporting System
-- [ ] **Create GWIZPerformanceReporter class** (Line 815)
-  - Design centralized reporting system for all performance metrics
-  - Implement unified data collection from pooling system and other systems
-  - Add extensible architecture for future system integration
-  - Create thread-safe data collection and reporting
+### 10.2 Centralized Metrics System
+- [ ] **Create GWIZCentralMetricsReporter class** (Line 815)
+  - Design centralized reporting system for all metrics
+  - Implement unified data collection and extensible architecture
   - Support real-time and historical data analysis
 
-- [ ] **Implement performance metrics aggregation** (Line 820)
-  - Create unified metrics structure for all system data
-  - Implement data normalization and statistical analysis
-  - Add trend analysis and performance forecasting
-  - Create performance alerts and threshold monitoring
-  - Support custom metric definitions and calculations
-
-- [ ] **Implement reporting output formats** (Line 825)
-  - Create console output with formatted performance reports
-  - Implement file-based reporting (JSON, CSV, XML)
-  - Add real-time dashboard data for external tools
-  - Create performance visualization data for charts and graphs
-  - Support custom output format plugins
-
 ### 10.3 External System Integration
-- [ ] **Implement ELK Stack integration** (Line 830)
-  - Create Elasticsearch data export functionality
-  - Implement Logstash data transformation and filtering
-  - Add Kibana dashboard configuration and templates
-  - Create real-time data streaming to ELK stack
-  - Support custom index mapping and data retention policies
-
-- [ ] **Implement Grafana integration** (Line 835)
-  - Create Grafana data source integration
-  - Implement custom dashboard templates for pooling metrics
-  - Add real-time data streaming to Grafana
-  - Create alerting rules and notification systems
-  - Support custom query language and data transformation
-
-- [ ] **Implement other monitoring system integrations** (Line 840)
-  - Create Prometheus metrics export functionality
-  - Implement InfluxDB time-series database integration
-  - Add custom monitoring system plugin architecture
-  - Create data format adapters for various monitoring tools
-  - Support webhook-based data export for custom systems
+- [ ] **Implement monitoring system integrations** (Line 830)
+  - ELK Stack integration (Elasticsearch, Logstash, Kibana)
+  - Grafana integration with custom dashboards
+  - Prometheus, InfluxDB, and webhook support
 
 ### 10.4 Enhanced Debug and Monitoring
 - [ ] **Replace existing debug output with centralized system** (Line 845)
-  - Migrate PrintDebugInfo() from GWIZObjectPool to centralized reporter
-  - Update PrintAllPoolStatistics() to use new reporting system
-  - Implement unified debug output with configurable verbosity
-  - Add structured logging with severity levels and categories
-  - Create debug output filtering and formatting options
-
-- [ ] **Implement real-time performance monitoring** (Line 850)
-  - Create real-time performance dashboard data
-  - Implement live performance metrics streaming
-  - Add performance anomaly detection and alerts
-  - Create performance trend visualization data
-  - Support custom performance monitoring dashboards
-
-- [ ] **Implement historical data analysis** (Line 855)
-  - Create historical performance data storage and retrieval
-  - Implement performance trend analysis and forecasting
-  - Add performance regression detection and reporting
-  - Create performance optimization recommendations
-  - Support performance data export for external analysis
+  - Migrate PrintDebugInfo() and PrintAllPoolStatistics() to centralized reporter
+  - Implement unified debug output and real-time monitoring
 
 ### 10.5 Testing Integration
 - [ ] **Update existing test framework** (Line 860)
-  - Integrate performance testing with existing FSimplePoolingTests
-  - Update RunAllTests() to include performance benchmarks
-  - Add performance test results to test reporting
-  - Implement automated performance regression testing
-  - Create performance test result comparison and analysis
-
-- [ ] **Implement performance test automation** (Line 865)
-  - Create automated performance test scheduling
-  - Implement performance test result validation and alerts
-  - Add performance test result archiving and versioning
-  - Create performance test result sharing and collaboration tools
-  - Support continuous integration performance testing
+  - Integrate performance testing with FSimplePoolingTests
+  - Add performance benchmarks to RunAllTests()
 
 ---
 
@@ -492,19 +417,19 @@ This document lists all outstanding tasks for completing the GWIZ Pooling System
 ## Phase 10 Implementation Strategy
 
 ### Architecture Overview
-The new performance testing and reporting system will consist of:
+The new performance testing and centralized metrics system will consist of:
 
-1. **GWIZPerformanceReporter** - Centralized reporting class
+1. **GWIZCentralMetricsReporter** - Centralized metrics reporting class
 2. **FGWIZPerformanceTestConfig** - Test configuration structure
-3. **FGWIZPerformanceMetrics** - Unified metrics structure
+3. **FGWIZUnifiedMetrics** - Unified metrics structure for all systems
 4. **PerformanceTest()** function in GWIZPoolingManager
 5. **External system integrations** (ELK, Grafana, etc.)
 
 ### Key Design Decisions
-- **Centralized vs Distributed**: Centralized reporting system for easier management
+- **Centralized vs Distributed**: Centralized metrics system for easier management
 - **Real-time vs Batch**: Support both real-time streaming and batch processing
 - **Extensibility**: Plugin architecture for future system integrations
-- **Performance Impact**: Minimal overhead on existing pooling system
+- **Performance Impact**: Minimal overhead on existing systems
 - **Data Formats**: Support multiple output formats for flexibility
 
 ### Integration Points
@@ -512,3 +437,10 @@ The new performance testing and reporting system will consist of:
 - **Test Framework**: Integrate with existing FSimplePoolingTests
 - **External Tools**: Provide data export for ELK, Grafana, and other monitoring systems
 - **Game Engine**: Leverage Unreal Engine's built-in performance monitoring capabilities
+
+### Documentation
+Detailed implementation specifications are provided in:
+- `docs/pooling-system/Pooling_System_Requirements.md` - Updated requirements
+- `docs/pooling-system/Pooling_System_Design.md` - Updated technical design
+- `docs/pooling-system/Pooling_System_Implementation_Plan.md` - Updated implementation plan
+- `docs/metrics/` - New centralized metrics system documentation

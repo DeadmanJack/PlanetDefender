@@ -165,6 +165,8 @@
   - Performance optimization tips
   - Pre-warming examples
   - Thread safety usage
+  - Performance testing examples
+  - Metrics integration examples
 
 ### 7.2 Create API Documentation
 - **File**: `docs/pooling-system/API_Reference.md`
@@ -175,6 +177,34 @@
   - Blueprint node documentation
   - Performance monitoring API
   - Thread safety API
+  - Performance testing API
+  - Metrics integration API
+
+## Phase 8: Performance Testing and Metrics Integration
+
+### 8.1 Integrate with Centralized Metrics System
+- **Tasks**:
+  - Replace existing debug output with centralized reporter
+  - Integrate pooling statistics as unified metrics
+  - Add automatic metrics collection from pooling operations
+  - Implement real-time pooling metrics streaming
+  - Add historical pooling performance analysis
+
+### 8.2 Implement Performance Testing
+- **Tasks**:
+  - Add PerformanceTest() function to AGWIZPoolingManager
+  - Implement pooling vs non-pooling comparison tests
+  - Add automated performance benchmarking
+  - Create performance regression testing
+  - Integrate with existing test framework
+
+### 8.3 Enhanced Monitoring and Reporting
+- **Tasks**:
+  - Implement structured logging with severity levels
+  - Add performance anomaly detection
+  - Create comprehensive performance reports
+  - Implement data export functionality
+  - Add external system integration support
 
 ## Implementation Order
 
@@ -203,6 +233,11 @@
 - [ ] Phase 6: Testing and Validation
 - [ ] Phase 7: Documentation and Examples
 
+### Week 6: Performance Testing and Metrics Integration
+- [ ] Phase 8.1: Integrate with Centralized Metrics System
+- [ ] Phase 8.2: Implement Performance Testing
+- [ ] Phase 8.3: Enhanced Monitoring and Reporting
+
 ## File Structure
 
 ```
@@ -215,6 +250,19 @@ Source/PlanetDefender/PoolingSystem/
 ├── AGWIZPoolingManager.cpp
 ├── GWIZPoolableHelpers.h
 └── GWIZPoolableHelpers.cpp
+
+Source/PlanetDefender/MetricsSystem/
+├── GWIZCentralMetricsReporter.h
+├── GWIZCentralMetricsReporter.cpp
+├── GWIZMetricsTypes.h
+├── GWIZMetricsTypes.cpp
+├── GWIZExternalSystemConfigs.h
+├── GWIZELKIntegration.h
+├── GWIZELKIntegration.cpp
+├── GWIZGrafanaIntegration.h
+├── GWIZGrafanaIntegration.cpp
+├── GWIZWebhookIntegration.h
+└── GWIZWebhookIntegration.cpp
 ```
 
 ## Dependencies
@@ -224,9 +272,11 @@ Source/PlanetDefender/PoolingSystem/
 - CoreUObject
 - Engine
 - HAL (for FCriticalSection)
+- HTTP (for external system integrations)
+- Json (for data export)
 
 ### External Dependencies
-- None required
+- None required (all integrations are optional)
 
 ## Testing Strategy
 
