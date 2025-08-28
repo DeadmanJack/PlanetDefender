@@ -2,77 +2,114 @@
 
 ## Overview
 
-This document provides a detailed implementation plan for the GWIZ Central Metrics Reporter system, including phases, tasks, dependencies, and timelines.
+This document provides a detailed implementation plan for the GWIZ Central Metrics Reporter system as a **comprehensive game analytics and performance monitoring plugin**. The system is designed as a **data science solution** that enables analytics beyond just performance metrics, including player behavior analysis, game balance insights, and business intelligence.
+
+**Key Implementation Strategy**: Both the GWIZ Pooling System and GWIZ Central Metrics Reporter will be implemented as **separate plugins** to ensure clean separation, reusability, and professional distribution capabilities.
 
 ## Implementation Phases
 
-### Phase 1: Core Infrastructure (Foundation)
+### Phase 1: Plugin Infrastructure Setup (Foundation)
 
-#### 1.1 Create Core Structures and Enums
+#### 1.1 Create Plugin Structure for Both Systems
 - **Files**: 
-  - `Source/PlanetDefender/MetricsSystem/GWIZMetricsTypes.h`
-  - `Source/PlanetDefender/MetricsSystem/GWIZMetricsTypes.cpp`
+  - `Plugins/GWIZPoolingSystem/GWIZPoolingSystem.uplugin`
+  - `Plugins/GWIZCentralMetricsReporter/GWIZCentralMetricsReporter.uplugin`
 - **Tasks**:
-  - Define `FGWIZUnifiedMetrics` structure with all required fields
+  - Create plugin directory structure for both systems
+  - Define plugin dependencies and module relationships
+  - Set up build system integration
+  - Create plugin descriptor files with proper metadata
+  - Establish plugin versioning and distribution structure
+
+#### 1.2 Create Core Data Structures and Enums
+- **Files**: 
+  - `Plugins/GWIZCentralMetricsReporter/Source/GWIZCentralMetricsReporter/Public/GWIZAnalyticsTypes.h`
+  - `Plugins/GWIZCentralMetricsReporter/Source/GWIZCentralMetricsReporter/Private/GWIZAnalyticsTypes.cpp`
+- **Tasks**:
+  - Define `FGWIZStaticSessionData` structure for session metadata
+  - Define `FGWIZEventData` structure for dynamic event data
+  - Define `FGWIZFlexibleData` structure for flexible data storage
+  - Create `EGWIZAnalyticsType` enum for analytics categorization
+  - Create `EGWIZExportFormat` enum for data export formats
+  - Add Blueprint property support and USTRUCT macros
+  - Implement utility functions (ToJSON, data manipulation, etc.)
+
+#### 1.3 Create Performance Testing Structures
+- **Files**: 
+  - `Plugins/GWIZCentralMetricsReporter/Source/GWIZCentralMetricsReporter/Public/GWIZPerformanceTestTypes.h`
+- **Tasks**:
   - Define `FGWIZPerformanceTestConfig` structure
   - Define `FGWIZPerformanceTestResult` structure
-  - Create `EGWIZMetricType` enum
-  - Create `EGWIZReportFormat` enum
-  - Add Blueprint property support and USTRUCT macros
-  - Implement utility functions (ToJSON, ToCSV, etc.)
+  - Add Blueprint property support for configuration
+  - Implement test result analysis and comparison functions
 
-#### 1.2 Create External System Configuration Structures
+### Phase 2: Session Management Implementation
+
+#### 2.1 Create UGWIZSessionManager Class
 - **Files**: 
-  - `Source/PlanetDefender/MetricsSystem/GWIZExternalSystemConfigs.h`
-- **Tasks**:
-  - Define `FGWIZELKConfig` structure for ELK Stack integration
-  - Define `FGWIZGrafanaConfig` structure for Grafana integration
-  - Define `FGWIZWebhookConfig` structure for webhook support
-  - Add validation functions for each configuration type
-  - Implement Blueprint property support
-
-#### 1.3 Update Build System
-- **File**: `Source/PlanetDefender/PlanetDefender.Build.cs`
-- **Tasks**:
-  - Add new module dependencies if needed
-  - Ensure proper include paths for metrics system
-  - Add any required external dependencies
-
-### Phase 2: Central Metrics Reporter Implementation
-
-#### 2.1 Create GWIZCentralMetricsReporter Class
-- **Files**: 
-  - `Source/PlanetDefender/MetricsSystem/GWIZCentralMetricsReporter.h`
-  - `Source/PlanetDefender/MetricsSystem/GWIZCentralMetricsReporter.cpp`
+  - `Plugins/GWIZCentralMetricsReporter/Source/GWIZCentralMetricsReporter/Public/GWIZSessionManager.h`
+  - `Plugins/GWIZCentralMetricsReporter/Source/GWIZCentralMetricsReporter/Private/GWIZSessionManager.cpp`
 - **Tasks**:
   - Implement singleton pattern with thread-safe access
-  - Add metrics storage (SystemMetrics, HistoricalMetrics)
-  - Implement performance test results storage
-  - Add thread safety with FCriticalSection
-  - Implement timer management for metrics collection
-  - Add external system configuration storage
+  - Add static session data management
+  - Implement session initialization and cleanup
+  - Add session duration tracking and updates
+  - Implement event creation with dynamic data population
+  - Add platform detection and metadata collection
 
-#### 2.2 Implement Core Metrics Collection
+#### 2.2 Implement Platform Integration
 - **Tasks**:
-  - Implement `CollectMetrics()` function with thread safety
-  - Add real-time metrics processing
-  - Implement historical data storage with ring buffer
+  - Add Steam platform detection and metadata collection
+  - Add Epic Games Store platform detection
+  - Implement hardware information collection
+  - Add build version and engine version detection
+  - Implement player identification and session tracking
+  - Add cross-platform compatibility handling
+
+#### 2.3 Implement Session Data Management
+- **Tasks**:
+  - Implement static data initialization and validation
+  - Add session ID generation and management
+  - Implement session duration tracking
+  - Add session state persistence and recovery
+  - Implement session cleanup and resource management
+  - Add session data export and backup functionality
+
+### Phase 3: Central Analytics Reporter Implementation
+
+#### 3.1 Create GWIZCentralMetricsReporter Class
+- **Files**: 
+  - `Plugins/GWIZCentralMetricsReporter/Source/GWIZCentralMetricsReporter/Public/GWIZCentralMetricsReporter.h`
+  - `Plugins/GWIZCentralMetricsReporter/Source/GWIZCentralMetricsReporter/Private/GWIZCentralMetricsReporter.cpp`
+- **Tasks**:
+  - Implement singleton pattern with thread-safe access
+  - Add event storage and management
+  - Implement real-time analytics processing
+  - Add historical data storage with ring buffer
+  - Implement automatic cleanup of old data
+  - Add analytics validation and error handling
+
+#### 3.2 Implement Event Collection and Processing
+- **Tasks**:
+  - Implement `CollectEvent()` function with thread safety
+  - Add real-time analytics processing
+  - Implement historical data storage with configurable limits
   - Add automatic cleanup of old historical data
-  - Implement metrics validation and error handling
+  - Implement analytics validation and error handling
   - Add performance optimization for high-frequency collection
 
-#### 2.3 Implement Reporting Functions
+#### 3.3 Implement Reporting Functions
 - **Tasks**:
-  - Implement `PrintMetricsReport()` with formatted output
-  - Add `ExportMetricsToFile()` with multiple format support
-  - Implement `StreamMetricsToExternalSystem()` for external integrations
-  - Add report generation with statistical analysis
-  - Implement custom report formatting options
-  - Add report filtering and sorting capabilities
+  - Implement `PrintAnalyticsReport()` with formatted output
+  - Add `ExportAnalyticsToFile()` with multiple format support
+  - Implement analytics filtering and sorting capabilities
+  - Add custom report formatting options
+  - Implement statistical analysis and trend detection
+  - Add real-time analytics dashboard data generation
 
-### Phase 3: Performance Testing System
+### Phase 4: Performance Testing System
 
-#### 3.1 Implement PerformanceTest Function
+#### 4.1 Implement PerformanceTest Function
 - **Tasks**:
   - Create `PerformanceTest()` function in GWIZCentralMetricsReporter
   - Add actor spawning logic with/without pooling
@@ -81,7 +118,7 @@ This document provides a detailed implementation plan for the GWIZ Central Metri
   - Implement test cleanup and resource management
   - Add progress tracking and status reporting
 
-#### 3.2 Implement Performance Test Configuration
+#### 4.2 Implement Performance Test Configuration
 - **Tasks**:
   - Add support for configurable test parameters
   - Implement multiple test runs with averaging
@@ -90,165 +127,182 @@ This document provides a detailed implementation plan for the GWIZ Central Metri
   - Add test result comparison and analysis
   - Implement performance gain calculation
 
-#### 3.3 Integrate with Pooling System
+#### 4.3 Integrate with Pooling System Plugin
 - **Tasks**:
-  - Add direct integration with GWIZPoolingManager
+  - Add direct integration with GWIZPoolingSystem plugin
   - Implement pooling vs non-pooling comparison tests
-  - Add pooling system metrics collection
+  - Add pooling system analytics collection
   - Implement performance gain measurement
   - Add pooling system statistics integration
   - Create automated pooling performance tests
 
-### Phase 4: External System Integration
+### Phase 5: Data Export and Analytics
 
-#### 4.1 Implement ELK Stack Integration
+#### 5.1 Implement JSON Export System
 - **Files**: 
-  - `Source/PlanetDefender/MetricsSystem/GWIZELKIntegration.h`
-  - `Source/PlanetDefender/MetricsSystem/GWIZELKIntegration.cpp`
+  - `Plugins/GWIZCentralMetricsReporter/Source/GWIZCentralMetricsReporter/Public/GWIZAnalyticsExport.h`
+  - `Plugins/GWIZCentralMetricsReporter/Source/GWIZCentralMetricsReporter/Private/GWIZAnalyticsExport.cpp`
 - **Tasks**:
-  - Create Elasticsearch data export functionality
-  - Implement Logstash data transformation
-  - Add Kibana dashboard configuration
-  - Implement real-time data streaming
-  - Add retry logic and error handling
-  - Create custom index mapping support
+  - Create JSON export functionality with referenced data approach
+  - Implement static session data export
+  - Add dynamic event data export with session references
+  - Implement data compression and optimization
+  - Add export validation and error handling
+  - Create export scheduling and automation
 
-#### 4.2 Implement Grafana Integration
-- **Files**: 
-  - `Source/PlanetDefender/MetricsSystem/GWIZGrafanaIntegration.h`
-  - `Source/PlanetDefender/MetricsSystem/GWIZGrafanaIntegration.cpp`
+#### 5.2 Implement CSV Export System
 - **Tasks**:
-  - Create Grafana data source integration
-  - Implement custom dashboard templates
-  - Add real-time metrics streaming
-  - Implement alerting rules and notifications
-  - Add InfluxDB integration support
-  - Create dashboard configuration management
+  - Create CSV export functionality for spreadsheet analysis
+  - Implement data flattening for complex nested structures
+  - Add CSV formatting and column management
+  - Implement large dataset handling and chunking
+  - Add CSV validation and error handling
+  - Create CSV template generation
 
-#### 4.3 Implement Webhook and Other Integrations
-- **Files**: 
-  - `Source/PlanetDefender/MetricsSystem/GWIZWebhookIntegration.h`
-  - `Source/PlanetDefender/MetricsSystem/GWIZWebhookIntegration.cpp`
+#### 5.3 Implement Analytics Processing
 - **Tasks**:
-  - Create webhook-based data export
-  - Implement Prometheus metrics export
-  - Add InfluxDB time-series database integration
-  - Create custom monitoring system plugin architecture
-  - Implement data format adapters
-  - Add webhook retry and error handling
+  - Create real-time analytics processing engine
+  - Implement trend analysis and anomaly detection
+  - Add statistical analysis and reporting
+  - Implement data aggregation and summarization
+  - Add analytics dashboard data generation
+  - Create analytics alerting and notification system
 
-### Phase 5: Enhanced Debug and Monitoring
+### Phase 6: Enhanced Debug and Monitoring
 
-#### 5.1 Replace Existing Debug Output
+#### 6.1 Replace Existing Debug Output
 - **Tasks**:
   - Migrate `PrintDebugInfo()` from GWIZObjectPool to centralized reporter
-  - Update `PrintAllPoolStatistics()` to use new reporting system
+  - Update `PrintAllPoolStatistics()` to use new analytics system
   - Implement unified debug output with configurable verbosity
   - Add structured logging with severity levels
   - Create debug output filtering and formatting
   - Implement debug output redirection
 
-#### 5.2 Implement Real-time Monitoring
+#### 6.2 Implement Real-time Monitoring
 - **Tasks**:
-  - Create real-time performance dashboard data
-  - Implement live metrics streaming
-  - Add performance anomaly detection
-  - Create performance trend visualization data
+  - Create real-time analytics dashboard data
+  - Implement live analytics streaming
+  - Add analytics anomaly detection
+  - Create analytics trend visualization data
   - Implement custom monitoring dashboards
   - Add real-time alerting system
 
-#### 5.3 Implement Historical Analysis
+#### 6.3 Implement Historical Analysis
 - **Tasks**:
   - Create historical data storage and retrieval
-  - Implement performance trend analysis
-  - Add performance regression detection
-  - Create performance optimization recommendations
+  - Implement analytics trend analysis
+  - Add analytics regression detection
+  - Create analytics optimization recommendations
   - Implement data export for external analysis
   - Add historical data visualization support
 
-### Phase 6: Testing and Validation
+### Phase 7: Testing and Validation
 
-#### 6.1 Create Unit Tests
+#### 7.1 Create Unit Tests
 - **Files**: 
-  - `Source/PlanetDefenderTests/Private/MetricsSystemTests.cpp`
-  - `Source/PlanetDefenderTests/Private/PerformanceTests.cpp`
+  - `Plugins/GWIZCentralMetricsReporter/Source/GWIZCentralMetricsReporterTests/Private/AnalyticsSystemTests.cpp`
+  - `Plugins/GWIZCentralMetricsReporter/Source/GWIZCentralMetricsReporterTests/Private/PerformanceTests.cpp`
 - **Tasks**:
-  - Test metrics collection and storage
+  - Test analytics collection and storage
   - Validate performance test functionality
-  - Test external system integrations
+  - Test data export functionality
   - Validate thread safety
   - Test error handling and recovery
-  - Validate data export functionality
+  - Validate session management
 
-#### 6.2 Create Integration Tests
+#### 7.2 Create Integration Tests
 - **Tasks**:
-  - Test integration with pooling system
+  - Test integration with pooling system plugin
   - Validate real-time monitoring
   - Test historical data analysis
-  - Validate external system connections
+  - Validate data export functionality
   - Test performance under load
   - Validate memory management
 
-#### 6.3 Create Blueprint Tests
+#### 7.3 Create Blueprint Tests
 - **Tasks**:
   - Test all Blueprint-exposed functions
   - Validate Blueprint configuration
   - Test Blueprint event handling
   - Validate Blueprint performance testing
   - Test Blueprint reporting functions
-  - Validate Blueprint external system integration
+  - Validate Blueprint data export
 
-### Phase 7: Documentation and Examples
+### Phase 8: Documentation and Examples
 
-#### 7.1 Create Usage Examples
+#### 8.1 Create Usage Examples
 - **Files**: 
-  - `docs/metrics/Usage_Examples.md`
-  - `docs/metrics/Performance_Testing_Guide.md`
+  - `Plugins/GWIZCentralMetricsReporter/Documentation/Usage_Examples.md`
+  - `Plugins/GWIZCentralMetricsReporter/Documentation/Performance_Testing_Guide.md`
 - **Tasks**:
-  - Create basic metrics collection examples
+  - Create basic analytics collection examples
   - Add performance testing examples
-  - Create external system integration examples
+  - Create game analytics examples
   - Add Blueprint implementation examples
   - Create troubleshooting guides
   - Add best practices documentation
 
-#### 7.2 Create API Documentation
+#### 8.2 Create API Documentation
 - **Files**: 
-  - `docs/metrics/API_Reference.md`
-  - `docs/metrics/External_System_Integration.md`
+  - `Plugins/GWIZCentralMetricsReporter/Documentation/API_Reference.md`
+  - `Plugins/GWIZCentralMetricsReporter/Documentation/Plugin_Integration.md`
 - **Tasks**:
   - Document all public functions and classes
   - Add parameter descriptions and examples
   - Create Blueprint node documentation
-  - Document external system configurations
+  - Document plugin integration procedures
   - Add performance considerations
   - Create migration guides
 
-## File Structure
+## Plugin File Structure
 
 ```
-Source/PlanetDefender/MetricsSystem/
-├── GWIZCentralMetricsReporter.h
-├── GWIZCentralMetricsReporter.cpp
-├── GWIZMetricsTypes.h
-├── GWIZMetricsTypes.cpp
-├── GWIZExternalSystemConfigs.h
-├── GWIZELKIntegration.h
-├── GWIZELKIntegration.cpp
-├── GWIZGrafanaIntegration.h
-├── GWIZGrafanaIntegration.cpp
-├── GWIZWebhookIntegration.h
-└── GWIZWebhookIntegration.cpp
-```
-
-```
-docs/metrics/
-├── GWIZCentralMetricsReporter_Design.md
-├── GWIZCentralMetricsReporter_Implementation_Plan.md
-├── Usage_Examples.md
-├── Performance_Testing_Guide.md
-├── API_Reference.md
-└── External_System_Integration.md
+Plugins/
+├── GWIZPoolingSystem/
+│   ├── GWIZPoolingSystem.uplugin
+│   ├── Source/
+│   │   └── GWIZPoolingSystem/
+│   │       ├── Public/
+│   │       │   ├── IGWIZPoolable.h
+│   │       │   ├── PoolingTypes.h
+│   │       │   ├── UGWIZObjectPool.h
+│   │       │   ├── AGWIZPoolingManager.h
+│   │       │   └── GWIZPoolableHelpers.h
+│   │       ├── Private/
+│   │       │   ├── UGWIZObjectPool.cpp
+│   │       │   ├── AGWIZPoolingManager.cpp
+│   │       │   └── GWIZPoolableHelpers.cpp
+│   │       └── GWIZPoolingSystem.Build.cs
+│   ├── Content/
+│   │   └── Examples/
+│   └── Documentation/
+│       ├── API_Reference.md
+│       ├── Integration_Guide.md
+│       └── Usage_Examples.md
+└── GWIZCentralMetricsReporter/
+    ├── GWIZCentralMetricsReporter.uplugin
+    ├── Source/
+    │   └── GWIZCentralMetricsReporter/
+    │       ├── Public/
+    │       │   ├── GWIZAnalyticsTypes.h
+    │       │   ├── GWIZPerformanceTestTypes.h
+    │       │   ├── UGWIZSessionManager.h
+    │       │   ├── UGWIZCentralMetricsReporter.h
+    │       │   └── GWIZAnalyticsExport.h
+    │       ├── Private/
+    │       │   ├── GWIZAnalyticsTypes.cpp
+    │       │   ├── UGWIZSessionManager.cpp
+    │       │   ├── UGWIZCentralMetricsReporter.cpp
+    │       │   └── GWIZAnalyticsExport.cpp
+    │       └── GWIZCentralMetricsReporter.Build.cs
+    ├── Content/
+    │   └── Examples/
+    └── Documentation/
+        ├── API_Reference.md
+        ├── Usage_Examples.md
+        ├── Performance_Testing_Guide.md
+        └── Plugin_Integration.md
 ```
 
 ## Dependencies
@@ -257,66 +311,75 @@ docs/metrics/
 - Core
 - CoreUObject
 - Engine
-- HTTP (for external system integrations)
-- Json (for data export)
+- HTTP (for data export)
+- Json (for data serialization)
 - HAL (for thread safety)
+
+### Plugin Dependencies
+- **GWIZCentralMetricsReporter** depends on **GWIZPoolingSystem** for performance testing integration
+- Both plugins are independent and can be used separately
 
 ### External Dependencies
 - None required (all integrations are optional)
 
 ## Implementation Timeline
 
-### Week 1: Foundation
-- [ ] Phase 1.1: Core Structures and Enums
-- [ ] Phase 1.2: External System Configuration Structures
-- [ ] Phase 1.3: Build System Updates
+### Week 1: Plugin Infrastructure
+- [ ] Phase 1.1: Create Plugin Structure for Both Systems
+- [ ] Phase 1.2: Create Core Data Structures and Enums
+- [ ] Phase 1.3: Create Performance Testing Structures
 
-### Week 2: Core Implementation
-- [ ] Phase 2.1: GWIZCentralMetricsReporter Class
-- [ ] Phase 2.2: Core Metrics Collection
-- [ ] Phase 2.3: Reporting Functions
+### Week 2: Session Management
+- [ ] Phase 2.1: Create UGWIZSessionManager Class
+- [ ] Phase 2.2: Implement Platform Integration
+- [ ] Phase 2.3: Implement Session Data Management
 
-### Week 3: Performance Testing
-- [ ] Phase 3.1: PerformanceTest Function
-- [ ] Phase 3.2: Performance Test Configuration
-- [ ] Phase 3.3: Pooling System Integration
+### Week 3: Central Analytics Reporter
+- [ ] Phase 3.1: Create GWIZCentralMetricsReporter Class
+- [ ] Phase 3.2: Implement Event Collection and Processing
+- [ ] Phase 3.3: Implement Reporting Functions
 
-### Week 4: External Integrations
-- [ ] Phase 4.1: ELK Stack Integration
-- [ ] Phase 4.2: Grafana Integration
-- [ ] Phase 4.3: Webhook and Other Integrations
+### Week 4: Performance Testing
+- [ ] Phase 4.1: Implement PerformanceTest Function
+- [ ] Phase 4.2: Implement Performance Test Configuration
+- [ ] Phase 4.3: Integrate with Pooling System Plugin
 
-### Week 5: Enhanced Features
-- [ ] Phase 5.1: Replace Existing Debug Output
-- [ ] Phase 5.2: Real-time Monitoring
-- [ ] Phase 5.3: Historical Analysis
+### Week 5: Data Export and Analytics
+- [ ] Phase 5.1: Implement JSON Export System
+- [ ] Phase 5.2: Implement CSV Export System
+- [ ] Phase 5.3: Implement Analytics Processing
 
-### Week 6: Testing and Documentation
-- [ ] Phase 6: Testing and Validation
-- [ ] Phase 7: Documentation and Examples
+### Week 6: Enhanced Features
+- [ ] Phase 6.1: Replace Existing Debug Output
+- [ ] Phase 6.2: Implement Real-time Monitoring
+- [ ] Phase 6.3: Implement Historical Analysis
+
+### Week 7: Testing and Documentation
+- [ ] Phase 7: Testing and Validation
+- [ ] Phase 8: Documentation and Examples
 
 ## Testing Strategy
 
 ### Unit Tests
-- Individual metrics collection and storage
+- Individual analytics collection and storage
 - Performance test functionality
-- External system integrations
+- Data export functionality
 - Thread safety validation
 - Error handling and recovery
-- Data export functionality
+- Session management validation
 
 ### Integration Tests
-- End-to-end metrics workflows
-- Pooling system integration
+- End-to-end analytics workflows
+- Pooling system plugin integration
 - Real-time monitoring validation
-- External system connectivity
+- Data export functionality
 - Performance under load
 - Memory management validation
 
 ### Manual Testing
 - Blueprint functionality
 - Real-time monitoring dashboards
-- External system configurations
+- Data export configurations
 - Performance testing scenarios
 - Report generation and export
 - Error handling scenarios
@@ -328,35 +391,35 @@ docs/metrics/
 - Configurable limits for all data storage
 - Automatic cleanup of old data
 - Efficient data structures for fast access
-- Memory pooling for metric structures
+- Memory pooling for analytics structures
 
 ### Thread Safety
 - Critical sections for all shared data access
 - Atomic operations where possible
-- Async processing for heavy operations
+- Async processing for heavy analytics operations
 - Batch processing to reduce overhead
 - Lock-free operations for read-only access
 
 ### Real-time Performance
-- Minimal overhead for metrics collection
+- Minimal overhead for analytics collection
 - Configurable collection intervals
 - Background processing for heavy analysis
 - Efficient data serialization
-- Optimized external system communication
+- Optimized data export
 
 ## Integration Points
 
 ### Existing Pooling System
 - Replace `PrintDebugInfo()` and `PrintAllPoolStatistics()`
-- Integrate pooling statistics as unified metrics
+- Integrate pooling statistics as comprehensive analytics events
 - Add performance testing with pooling comparison
 - Enhance real-time pooling monitoring
 
 ### Test Framework
-- Add performance benchmarks to `FSimplePoolingTests`
-- Integrate performance testing with `RunAllTests()`
-- Add automated performance regression testing
-- Create performance metrics for CI/CD
+- Add analytics benchmarks to `FSimplePoolingTests`
+- Integrate analytics testing with `RunAllTests()`
+- Add automated analytics regression testing
+- Create analytics metrics for CI/CD
 
 ### Game Engine
 - Leverage Unreal Engine's built-in performance monitoring
@@ -367,7 +430,7 @@ docs/metrics/
 ## Future Extensibility
 
 ### Plugin Architecture
-- Custom metric type extensions
+- Custom analytics type extensions
 - External system plugin support
 - Custom report format plugins
 - Advanced analytics plugins
@@ -383,4 +446,23 @@ docs/metrics/
 - Predictive analytics
 - Custom alerting rules
 - Advanced visualization support
-- Multi-game metrics aggregation
+- Multi-game analytics aggregation
+
+## Distribution Strategy
+
+### Plugin Distribution
+- **GWIZPoolingSystem**: Standalone pooling system plugin
+- **GWIZCentralMetricsReporter**: Comprehensive analytics plugin
+- **Bundle Package**: Combined package with both plugins
+
+### Marketplace Preparation
+- Create plugin marketplace assets
+- Prepare comprehensive documentation
+- Create video tutorials and examples
+- Set up support and community channels
+
+### Version Management
+- Semantic versioning for both plugins
+- Changelog documentation
+- Migration guides for major versions
+- Backward compatibility guarantees

@@ -180,31 +180,31 @@
   - Performance testing API
   - Metrics integration API
 
-## Phase 8: Performance Testing and Metrics Integration
+## Phase 8: Performance Testing and Analytics Integration
 
-### 8.1 Integrate with Centralized Metrics System
+### 8.1 Integrate with Centralized Analytics System
 - **Tasks**:
-  - Replace existing debug output with centralized reporter
-  - Integrate pooling statistics as unified metrics
-  - Add automatic metrics collection from pooling operations
-  - Implement real-time pooling metrics streaming
-  - Add historical pooling performance analysis
+  - Replace existing debug output with centralized analytics reporter
+  - Integrate pooling statistics as comprehensive analytics events
+  - Add automatic analytics collection from pooling operations
+  - Implement real-time pooling analytics streaming
+  - Add historical pooling analytics analysis
 
 ### 8.2 Implement Performance Testing
 - **Tasks**:
   - Add PerformanceTest() function to AGWIZPoolingManager
   - Implement pooling vs non-pooling comparison tests
   - Add automated performance benchmarking
-  - Create performance regression testing
+  - Create analytics regression testing
   - Integrate with existing test framework
 
 ### 8.3 Enhanced Monitoring and Reporting
 - **Tasks**:
   - Implement structured logging with severity levels
-  - Add performance anomaly detection
-  - Create comprehensive performance reports
+  - Add analytics anomaly detection
+  - Create comprehensive analytics reports
   - Implement data export functionality
-  - Add external system integration support
+  - Add analytics dashboard integration support
 
 ## Implementation Order
 
@@ -233,36 +233,59 @@
 - [ ] Phase 6: Testing and Validation
 - [ ] Phase 7: Documentation and Examples
 
-### Week 6: Performance Testing and Metrics Integration
-- [ ] Phase 8.1: Integrate with Centralized Metrics System
+### Week 6: Performance Testing and Analytics Integration
+- [ ] Phase 8.1: Integrate with Centralized Analytics System
 - [ ] Phase 8.2: Implement Performance Testing
 - [ ] Phase 8.3: Enhanced Monitoring and Reporting
 
-## File Structure
+## Plugin File Structure
 
 ```
-Source/PlanetDefender/PoolingSystem/
-├── IGWIZPoolable.h
-├── PoolingTypes.h
-├── UGWIZObjectPool.h
-├── UGWIZObjectPool.cpp
-├── AGWIZPoolingManager.h
-├── AGWIZPoolingManager.cpp
-├── GWIZPoolableHelpers.h
-└── GWIZPoolableHelpers.cpp
-
-Source/PlanetDefender/MetricsSystem/
-├── GWIZCentralMetricsReporter.h
-├── GWIZCentralMetricsReporter.cpp
-├── GWIZMetricsTypes.h
-├── GWIZMetricsTypes.cpp
-├── GWIZExternalSystemConfigs.h
-├── GWIZELKIntegration.h
-├── GWIZELKIntegration.cpp
-├── GWIZGrafanaIntegration.h
-├── GWIZGrafanaIntegration.cpp
-├── GWIZWebhookIntegration.h
-└── GWIZWebhookIntegration.cpp
+Plugins/
+├── GWIZPoolingSystem/
+│   ├── GWIZPoolingSystem.uplugin
+│   ├── Source/
+│   │   └── GWIZPoolingSystem/
+│   │       ├── Public/
+│   │       │   ├── IGWIZPoolable.h
+│   │       │   ├── PoolingTypes.h
+│   │       │   ├── UGWIZObjectPool.h
+│   │       │   ├── AGWIZPoolingManager.h
+│   │       │   └── GWIZPoolableHelpers.h
+│   │       ├── Private/
+│   │       │   ├── UGWIZObjectPool.cpp
+│   │       │   ├── AGWIZPoolingManager.cpp
+│   │       │   └── GWIZPoolableHelpers.cpp
+│   │       └── GWIZPoolingSystem.Build.cs
+│   ├── Content/
+│   │   └── Examples/
+│   └── Documentation/
+│       ├── API_Reference.md
+│       ├── Integration_Guide.md
+│       └── Usage_Examples.md
+└── GWIZCentralMetricsReporter/
+    ├── GWIZCentralMetricsReporter.uplugin
+    ├── Source/
+    │   └── GWIZCentralMetricsReporter/
+    │       ├── Public/
+    │       │   ├── GWIZAnalyticsTypes.h
+    │       │   ├── GWIZPerformanceTestTypes.h
+    │       │   ├── UGWIZSessionManager.h
+    │       │   ├── UGWIZCentralMetricsReporter.h
+    │       │   └── GWIZAnalyticsExport.h
+    │       ├── Private/
+    │       │   ├── GWIZAnalyticsTypes.cpp
+    │       │   ├── UGWIZSessionManager.cpp
+    │       │   ├── UGWIZCentralMetricsReporter.cpp
+    │       │   └── GWIZAnalyticsExport.cpp
+    │       └── GWIZCentralMetricsReporter.Build.cs
+    ├── Content/
+    │   └── Examples/
+    └── Documentation/
+        ├── API_Reference.md
+        ├── Usage_Examples.md
+        ├── Performance_Testing_Guide.md
+        └── Plugin_Integration.md
 ```
 
 ## Dependencies
@@ -272,8 +295,12 @@ Source/PlanetDefender/MetricsSystem/
 - CoreUObject
 - Engine
 - HAL (for FCriticalSection)
-- HTTP (for external system integrations)
-- Json (for data export)
+- HTTP (for data export)
+- Json (for data serialization)
+
+### Plugin Dependencies
+- **GWIZCentralMetricsReporter** depends on **GWIZPoolingSystem** for performance testing integration
+- Both plugins are independent and can be used separately
 
 ### External Dependencies
 - None required (all integrations are optional)
@@ -294,7 +321,7 @@ Source/PlanetDefender/MetricsSystem/
 - Performance benchmarks
 - Memory usage validation
 - Thread safety validation
-- Monitoring system validation
+- Analytics system validation
 
 ### Manual Testing
 - Editor integration

@@ -333,34 +333,34 @@ private:
 - Batch operations for bulk pool management
 - Performance metrics collection and analysis
 
-## Integration with Centralized Metrics System
+## Integration with Centralized Analytics System
 
 ### GWIZCentralMetricsReporter Integration
-The pooling system integrates with the centralized metrics system to provide comprehensive monitoring and reporting capabilities.
+The pooling system integrates with the centralized analytics system to provide comprehensive game analytics and performance monitoring capabilities.
 
-#### Metrics Collection
-- **Pool Statistics**: All pool statistics are collected as unified metrics
+#### Analytics Collection
+- **Pool Statistics**: All pool statistics are collected as comprehensive analytics events
 - **Performance Data**: Real-time performance data from pool operations
 - **Memory Usage**: Detailed memory usage tracking and analysis
-- **Custom Metrics**: Support for custom pooling-specific metrics
+- **Custom Analytics**: Support for custom pooling-specific analytics
 
 #### Performance Testing
 - **Automated Testing**: Performance tests with pooling vs non-pooling comparison
 - **Benchmarking**: Automated benchmarking of pool performance
-- **Regression Testing**: Performance regression detection and reporting
+- **Regression Testing**: Analytics regression detection and reporting
 - **Load Testing**: Stress testing with high object counts
 
 #### Debug Output Replacement
-- **Centralized Debug**: `PrintDebugInfo()` and `PrintAllPoolStatistics()` use centralized reporter
+- **Centralized Debug**: `PrintDebugInfo()` and `PrintAllPoolStatistics()` use centralized analytics reporter
 - **Structured Logging**: Enhanced logging with severity levels and categories
-- **Real-time Monitoring**: Live pooling system metrics in centralized dashboard
-- **Historical Analysis**: Long-term performance trend analysis
+- **Real-time Monitoring**: Live pooling system analytics in centralized dashboard
+- **Historical Analysis**: Long-term analytics trend analysis
 
-#### External System Integration
-- **ELK Stack**: Pooling metrics exported to Elasticsearch for analysis
-- **Grafana**: Real-time pooling dashboards and alerting
-- **Custom Dashboards**: Custom monitoring dashboards for pooling metrics
-- **Data Export**: Comprehensive data export for external analysis
+#### Data Export Integration
+- **JSON Export**: Pooling analytics exported to JSON for data science analysis
+- **CSV Export**: Pooling analytics exported to CSV for spreadsheet analysis
+- **Custom Dashboards**: Custom analytics dashboards for pooling metrics
+- **Data Export**: Comprehensive analytics export for external analysis
 
 ### Enhanced Pooling Manager
 The `AGWIZPoolingManager` is enhanced with performance testing capabilities:
@@ -373,25 +373,32 @@ void PerformanceTest(TSubclassOf<AActor> ActorClass, int32 SpawnCount,
                     const FGWIZPerformanceTestConfig& Config);
 ```
 
-### Metrics Integration
-Pooling statistics are automatically integrated into the centralized metrics system:
+### Analytics Integration
+Pooling statistics are automatically integrated into the centralized analytics system:
 
 ```cpp
-// Automatic metrics collection
-void AGWIZPoolingManager::CollectPoolingMetrics()
+// Automatic analytics collection
+void AGWIZPoolingManager::CollectPoolingAnalytics()
 {
-    FGWIZUnifiedMetrics Metrics;
-    Metrics.SystemName = TEXT("PoolingSystem");
-    Metrics.MetricType = EGWIZMetricType::Performance;
-    Metrics.Value = GetTotalObjects();
-    Metrics.MemoryUsage = GetTotalMemoryUsage();
-    Metrics.CPUUsage = CalculateCPUUsage();
+    // Get session manager and create event
+    UGWIZSessionManager* SessionManager = UGWIZSessionManager::GetSessionManager();
+    FGWIZEventData PoolingEvent = SessionManager->CreateEvent("Performance", "PoolingSystem");
     
-    // Add custom pooling data
-    Metrics.AddCustomData(TEXT("PoolCount"), FString::FromInt(GetPoolCount()));
-    Metrics.AddCustomData(TEXT("HitRate"), FString::SanitizeFloat(GetGlobalHitRate()));
+    // Add pooling-specific analytics data
+    PoolingEvent.Data.SetInt("TotalObjects", GetTotalObjects());
+    PoolingEvent.Data.SetInt64("MemoryUsage", GetTotalMemoryUsage());
+    PoolingEvent.Data.SetFloat("CPUUsage", CalculateCPUUsage());
+    PoolingEvent.Data.SetInt("PoolCount", GetPoolCount());
+    PoolingEvent.Data.SetFloat("HitRate", GetGlobalHitRate());
     
-    // Send to centralized reporter
-    UGWIZCentralMetricsReporter::GetMetricsReporter()->CollectMetrics(TEXT("PoolingSystem"), Metrics);
+    // Add nested data for detailed analysis
+    FGWIZFlexibleData PoolDetails;
+    PoolDetails.SetInt("ActivePools", GetActivePoolCount());
+    PoolDetails.SetInt("InactivePools", GetInactivePoolCount());
+    PoolDetails.SetFloat("AveragePoolSize", GetAveragePoolSize());
+    PoolingEvent.Data.SetNested("PoolDetails", PoolDetails);
+    
+    // Send to centralized analytics reporter
+    UGWIZCentralMetricsReporter::GetMetricsReporter()->CollectEvent(PoolingEvent);
 }
 ```

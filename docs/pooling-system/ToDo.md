@@ -417,25 +417,26 @@ This document lists all outstanding tasks for completing the GWIZ Pooling System
 ## Phase 10 Implementation Strategy
 
 ### Architecture Overview
-The new performance testing and centralized metrics system will consist of:
+The new performance testing and centralized analytics system will consist of:
 
-1. **GWIZCentralMetricsReporter** - Centralized metrics reporting class
-2. **FGWIZPerformanceTestConfig** - Test configuration structure
-3. **FGWIZUnifiedMetrics** - Unified metrics structure for all systems
-4. **PerformanceTest()** function in GWIZPoolingManager
-5. **External system integrations** (ELK, Grafana, etc.)
+1. **GWIZCentralMetricsReporter** - Centralized analytics reporting class
+2. **UGWIZSessionManager** - Session management with static data optimization
+3. **FGWIZEventData** - Dynamic event data structure
+4. **FGWIZFlexibleData** - Flexible JSON-like data structure
+5. **PerformanceTest()** function in GWIZPoolingManager
+6. **Data export systems** (JSON, CSV for data science analysis)
 
 ### Key Design Decisions
-- **Centralized vs Distributed**: Centralized metrics system for easier management
-- **Real-time vs Batch**: Support both real-time streaming and batch processing
-- **Extensibility**: Plugin architecture for future system integrations
-- **Performance Impact**: Minimal overhead on existing systems
-- **Data Formats**: Support multiple output formats for flexibility
+- **Plugin Architecture**: Both systems implemented as separate plugins for clean separation
+- **Data Science Focus**: Comprehensive game analytics beyond just performance metrics
+- **Optimized Storage**: Static vs dynamic data separation to avoid duplication
+- **Flexible Data**: JSON-like structure for maximum data complexity handling
+- **Export Ready**: JSON/CSV export for external data science tools
 
 ### Integration Points
 - **Existing Pooling System**: Enhance current monitoring without breaking changes
 - **Test Framework**: Integrate with existing FSimplePoolingTests
-- **External Tools**: Provide data export for ELK, Grafana, and other monitoring systems
+- **Data Science Tools**: Provide data export for analytics and visualization tools
 - **Game Engine**: Leverage Unreal Engine's built-in performance monitoring capabilities
 
 ### Documentation
@@ -443,4 +444,4 @@ Detailed implementation specifications are provided in:
 - `docs/pooling-system/Pooling_System_Requirements.md` - Updated requirements
 - `docs/pooling-system/Pooling_System_Design.md` - Updated technical design
 - `docs/pooling-system/Pooling_System_Implementation_Plan.md` - Updated implementation plan
-- `docs/metrics/` - New centralized metrics system documentation
+- `docs/metrics/` - New centralized analytics system documentation
