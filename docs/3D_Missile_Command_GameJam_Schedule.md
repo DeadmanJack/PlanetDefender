@@ -13,10 +13,10 @@
 **Priority: CRITICAL**
 
 #### Morning (3 hours)
-- [ ] **Project Setup & Basic Architecture**
-  - [ ] 1.1 Create Unreal Engine 5.6 project with C++ support
-  - [ ] 1.2 Set up basic folder structure (Source, Content, Configs)
-  - [ ] 1.3 Create base Entity class and component system
+- [x] **Project Setup & Basic Architecture**
+  - [x] 1.1 Create Unreal Engine 5.6 project with C++ support
+  - [x] 1.2 Set up basic folder structure (Source, Content, Configs)
+  - [x] 1.3 Create base Entity class and component system
   - [ ] 1.4 Implement basic Game Mode and Game State
   - [ ] 1.5 **Mass AI Setup:** Enable Mass AI plugin and create basic entity archetypes
   - [ ] 1.6 **Object Pooling Foundation:** Create pool manager class structure with IPoolable interface
